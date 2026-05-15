@@ -142,10 +142,18 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentCategory = '';
         let currentStatus = '';
 
+        let currentUser = null;
         // Check authentication immediately
-        fetch('/api/auth/me').then(res => {
-            if (!res.ok) window.location.href = '/login.html';
-        });
+        fetch('/api/auth/me')
+            .then(res => {
+                if (!res.ok) throw new Error('Not auth');
+                return res.json();
+            })
+            .then(data => {
+                currentUser = data;
+                loadIdeas();
+            })
+            .catch(() => window.location.href = '/login.html');
 
         // Wire up New Idea buttons
         document.querySelectorAll('button').forEach(b => {
@@ -287,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     actionBtns.forEach(btn => {
                         btn.style.display = 'none'; // hide by default
                         if (btn.textContent.trim() === 'delete') {
-                            if (user.id === idea.submitter_id || user.role === 'REVIEWER') {
+                            if (currentUser?.id === idea.submitter_id || currentUser?.role === 'REVIEWER') {
                                 btn.style.display = 'block';
                                 btn.addEventListener('click', async (e) => {
                                     e.stopPropagation();
@@ -354,7 +362,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error(err);
             }
         };
-        loadIdeas();
     }
 
     // ----- CREATE IDEA PAGE -----

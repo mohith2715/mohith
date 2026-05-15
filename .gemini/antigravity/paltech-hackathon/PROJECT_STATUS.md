@@ -28,4 +28,4 @@
 - Phase 8: Finalize filtering, search, sorting, pagination & Bug Fixing.
 
 ## Latest Commit Hash
-- Pending (To be committed).
+- `deac6d7`
