@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="/theme.css">
     <script src="/theme.js"></script>
 <style>
-        body { font-family: 'Manrope', sans-serif; background-color: #f7f9fb; }
+        body { font-family: 'Manrope', sans-serif; background-color: var(--color-background); }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
         .card-shadow { box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
     </style>
@@ -46,11 +46,11 @@
 <div class="flex flex-col md:flex-row gap-md">
 <div class="flex-grow relative">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
-<input class="w-full pl-10 pr-4 py-2 bg-white border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary focus:border-secondary font-body-md text-body-md" placeholder="Search ideas..." type="text"/>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary focus:border-secondary font-body-md text-body-md" placeholder="Search ideas..." type="text"/>
 </div>
 <div class="flex flex-col sm:flex-row gap-md">
 <div class="relative min-w-[140px]">
-<select class="w-full pl-3 pr-8 py-2 bg-white border border-outline-variant rounded-lg appearance-none focus:ring-1 focus:ring-secondary font-body-md text-body-md">
+<select class="w-full pl-3 pr-8 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg appearance-none focus:ring-1 focus:ring-secondary font-body-md text-body-md">
 <option>Category</option>
 <option>Tech</option>
 <option>Process</option>
@@ -59,7 +59,7 @@
 <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-outline" data-icon="expand_more">expand_more</span>
 </div>
 <div class="relative min-w-[140px]">
-<select class="w-full pl-3 pr-8 py-2 bg-white border border-outline-variant rounded-lg appearance-none focus:ring-1 focus:ring-secondary font-body-md text-body-md">
+<select class="w-full pl-3 pr-8 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg appearance-none focus:ring-1 focus:ring-secondary font-body-md text-body-md">
 <option>Status</option>
 <option>Submitted</option>
 <option>Under Review</option>
@@ -69,7 +69,7 @@
 <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-outline" data-icon="expand_more">expand_more</span>
 </div>
 <div class="relative min-w-[140px]">
-<select id="sort-by" class="w-full pl-3 pr-8 py-2 bg-white border border-outline-variant rounded-lg appearance-none focus:ring-1 focus:ring-secondary font-body-md text-body-md">
+<select id="sort-by" class="w-full pl-3 pr-8 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg appearance-none focus:ring-1 focus:ring-secondary font-body-md text-body-md">
 <option value="created_at">Newest</option>
 <option value="avg_rating">Highest Rated</option>
 <option value="rating_count">Most Rated</option>
@@ -107,8 +107,8 @@
 </div>
 </div>
 <div class="flex items-center gap-md self-end md:self-center">
-<button class="material-symbols-outlined p-2 text-outline hover:text-secondary hover:bg-white rounded-full transition-all" data-icon="edit">edit</button>
-<button class="material-symbols-outlined p-2 text-outline hover:text-error hover:bg-white rounded-full transition-all" data-icon="delete">delete</button>
+<button class="material-symbols-outlined p-2 text-outline hover:text-secondary hover:bg-surface-container-lowest rounded-full transition-all" data-icon="edit">edit</button>
+<button class="material-symbols-outlined p-2 text-outline hover:text-error hover:bg-surface-container-lowest rounded-full transition-all" data-icon="delete">delete</button>
 </div>
 </div>
 <!-- Card 2: Under Review -->
@@ -126,8 +126,8 @@
 </div>
 </div>
 <div class="flex items-center gap-md self-end md:self-center">
-<button class="material-symbols-outlined p-2 text-outline hover:text-secondary hover:bg-white rounded-full transition-all" data-icon="edit">edit</button>
-<button class="material-symbols-outlined p-2 text-outline hover:text-error hover:bg-white rounded-full transition-all" data-icon="delete">delete</button>
+<button class="material-symbols-outlined p-2 text-outline hover:text-secondary hover:bg-surface-container-lowest rounded-full transition-all" data-icon="edit">edit</button>
+<button class="material-symbols-outlined p-2 text-outline hover:text-error hover:bg-surface-container-lowest rounded-full transition-all" data-icon="delete">delete</button>
 </div>
 </div>
 <!-- Card 3: Submitted -->
@@ -145,8 +145,8 @@
 </div>
 </div>
 <div class="flex items-center gap-md self-end md:self-center">
-<button class="material-symbols-outlined p-2 text-outline hover:text-secondary hover:bg-white rounded-full transition-all" data-icon="edit">edit</button>
-<button class="material-symbols-outlined p-2 text-outline hover:text-error hover:bg-white rounded-full transition-all" data-icon="delete">delete</button>
+<button class="material-symbols-outlined p-2 text-outline hover:text-secondary hover:bg-surface-container-lowest rounded-full transition-all" data-icon="edit">edit</button>
+<button class="material-symbols-outlined p-2 text-outline hover:text-error hover:bg-surface-container-lowest rounded-full transition-all" data-icon="delete">delete</button>
 </div>
 </div>
 <!-- Card 4: Rejected -->
@@ -164,14 +164,14 @@
 </div>
 </div>
 <div class="flex items-center gap-md self-end md:self-center">
-<button class="material-symbols-outlined p-2 text-outline hover:text-secondary hover:bg-white rounded-full transition-all" data-icon="edit">edit</button>
-<button class="material-symbols-outlined p-2 text-outline hover:text-error hover:bg-white rounded-full transition-all" data-icon="delete">delete</button>
+<button class="material-symbols-outlined p-2 text-outline hover:text-secondary hover:bg-surface-container-lowest rounded-full transition-all" data-icon="edit">edit</button>
+<button class="material-symbols-outlined p-2 text-outline hover:text-error hover:bg-surface-container-lowest rounded-full transition-all" data-icon="delete">delete</button>
 </div>
 </div>
 </div>
 <!-- Pagination -->
 <nav class="mt-xl flex items-center justify-center gap-base">
-<button class="flex items-center justify-center h-10 px-md rounded-lg border border-outline-variant bg-white text-on-surface-variant hover:bg-surface-container-low transition-all">
+<button class="flex items-center justify-center h-10 px-md rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-low transition-all">
 <span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
 <span class="font-label-md text-label-md">Previous</span>
 </button>
@@ -180,7 +180,7 @@
 <button class="w-10 h-10 rounded-lg hover:bg-surface-container text-on-surface-variant">2</button>
 <button class="w-10 h-10 rounded-lg hover:bg-surface-container text-on-surface-variant">3</button>
 </div>
-<button class="flex items-center justify-center h-10 px-md rounded-lg border border-outline-variant bg-white text-on-surface-variant hover:bg-surface-container-low transition-all">
+<button class="flex items-center justify-center h-10 px-md rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-low transition-all">
 <span class="font-label-md text-label-md">Next</span>
 <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
 </button>

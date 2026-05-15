@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="/theme.css">
     <script src="/theme.js"></script>
 <style>
-        body { font-family: 'Manrope', sans-serif; background-color: #f7f9fb; }
+        body { font-family: 'Manrope', sans-serif; background-color: var(--color-background); }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
@@ -37,7 +37,7 @@
 <main class="flex-grow pt-32 pb-xl px-margin-mobile flex flex-col items-center justify-center">
 <!-- Brand & Heading Cluster -->
 <div class="text-center mb-xl">
-<div class="inline-flex items-center justify-center p-md bg-white rounded-full shadow-sm mb-md">
+<div class="inline-flex items-center justify-center p-md bg-surface-container-lowest rounded-full shadow-sm mb-md">
 <span class="material-symbols-outlined text-[40px] text-primary" data-icon="lightbulb">lightbulb</span>
 </div>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-background mb-base">Join the Community</h2>
@@ -51,7 +51,7 @@
 <label class="font-label-md text-label-md text-on-surface">Email Address</label>
 <div class="relative flex items-center">
 <span class="material-symbols-outlined absolute left-md text-outline" data-icon="mail">mail</span>
-<input class="w-full pl-12 pr-md py-3 rounded-lg border-[#E2E8F0] focus:ring-1 focus:ring-secondary focus:border-secondary font-body-md text-body-md bg-white transition-all outline-none" placeholder="you@company.com" type="email"/>
+<input class="w-full pl-12 pr-md py-3 rounded-lg border-outline-variant focus:ring-1 focus:ring-secondary focus:border-secondary font-body-md text-body-md bg-surface-container-lowest transition-all outline-none" placeholder="you@company.com" type="email"/>
 </div>
 </div>
 <!-- Password Field -->
@@ -59,7 +59,7 @@
 <label class="font-label-md text-label-md text-on-surface">Password</label>
 <div class="relative flex items-center">
 <span class="material-symbols-outlined absolute left-md text-outline" data-icon="lock">lock</span>
-<input class="w-full pl-12 pr-12 py-3 rounded-lg border-[#E2E8F0] focus:ring-1 focus:ring-secondary focus:border-secondary font-body-md text-body-md bg-white transition-all outline-none" placeholder="••••••••" type="password"/>
+<input class="w-full pl-12 pr-12 py-3 rounded-lg border-outline-variant focus:ring-1 focus:ring-secondary focus:border-secondary font-body-md text-body-md bg-surface-container-lowest transition-all outline-none" placeholder="••••••••" type="password"/>
 <button class="absolute right-md text-outline hover:text-primary transition-colors flex items-center" type="button">
 <span class="material-symbols-outlined" data-icon="visibility">visibility</span>
 </button>
@@ -70,7 +70,7 @@
 <label class="font-label-md text-label-md text-on-surface">Confirm Password</label>
 <div class="relative flex items-center">
 <span class="material-symbols-outlined absolute left-md text-outline" data-icon="lock">lock</span>
-<input class="w-full pl-12 pr-md py-3 rounded-lg border-[#E2E8F0] focus:ring-1 focus:ring-secondary focus:border-secondary font-body-md text-body-md bg-white transition-all outline-none" placeholder="••••••••" type="password"/>
+<input class="w-full pl-12 pr-md py-3 rounded-lg border-outline-variant focus:ring-1 focus:ring-secondary focus:border-secondary font-body-md text-body-md bg-surface-container-lowest transition-all outline-none" placeholder="••••••••" type="password"/>
 </div>
 </div>
 <!-- Reviewer Code Field (Optional) -->
@@ -78,11 +78,11 @@
 <label class="font-label-md text-label-md text-on-surface">Reviewer Code (Optional)</label>
 <div class="relative flex items-center">
 <span class="material-symbols-outlined absolute left-md text-outline" data-icon="key">key</span>
-<input id="reviewer-code" class="w-full pl-12 pr-md py-3 rounded-lg border-[#E2E8F0] focus:ring-1 focus:ring-secondary focus:border-secondary font-body-md text-body-md bg-white transition-all outline-none" placeholder="Enter code for reviewer access" type="password"/>
+<input id="reviewer-code" class="w-full pl-12 pr-md py-3 rounded-lg border-outline-variant focus:ring-1 focus:ring-secondary focus:border-secondary font-body-md text-body-md bg-surface-container-lowest transition-all outline-none" placeholder="Enter code for reviewer access" type="password"/>
 </div>
 </div>
 <!-- Primary Register Button -->
-<button class="w-full bg-[#0f172a] text-white py-4 rounded-lg font-label-md text-label-md active:scale-95 transition-transform duration-200 mt-md" type="submit">
+<button class="w-full bg-primary text-on-primary py-4 rounded-lg font-label-md text-label-md active:scale-95 transition-transform duration-200 mt-md" type="submit">
                     Register
                 </button>
 <!-- Divider -->
@@ -92,7 +92,7 @@
 <div class="flex-grow border-t border-outline-variant"></div>
 </div>
 <!-- Social Sign-up -->
-<button class="w-full bg-white border border-[#E2E8F0] text-on-background py-4 rounded-lg font-label-md text-label-md flex items-center justify-center gap-base hover:bg-surface-container-low transition-colors active:scale-95" type="button">
+<button class="w-full bg-surface-container-lowest border border-outline-variant text-on-background py-4 rounded-lg font-label-md text-label-md flex items-center justify-center gap-base hover:bg-surface-container-low transition-colors active:scale-95" type="button">
 <img alt="Google logo" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGGX8DXkgQKsSKCTOLWWu8DQRvNtyWIPLeHDfxX2b4WJuXJI2wnn27uxDNO-MPbNn9snNAWLfnNUqfB2PUhnNz5DIK2S-RcfhYA8-nZfcS6I59u4hZQ8MU4lwzhbGYQptqAFq7Dbhh-RJ_oLC9RaNz8OmWhcyY0YXXLgD2-EdgpHMU9Csy8n_1a-JcZg9CqBBcajV9H9IbV_0K0RNjKvwqwsI3ssm1c19L1CmzTEVjPCV0DTp5yfF7xU2fBfj9_c-d5_4Fu6nWO_M"/>
                     Sign up with Google
                 </button>
