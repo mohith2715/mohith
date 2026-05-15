@@ -8,6 +8,20 @@ const initTheme = () => {
         document.documentElement.classList.add('light');
     }
 };
+
+// Status badge color helper
+function getStatusBadgeClasses(status) {
+    switch (status) {
+        case 'Under Review':
+            return 'bg-yellow-100 text-yellow-800 border border-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700';
+        case 'Rejected':
+            return 'bg-red-100 text-red-800 border border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700';
+        case 'Selected':
+            return 'bg-green-100 text-green-800 border border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700';
+        default: // 'Submitted'
+            return 'bg-gray-100 text-gray-700 border border-gray-300 dark:bg-gray-800/40 dark:text-gray-300 dark:border-gray-600';
+    }
+}
 initTheme();
 
 window.toggleTheme = () => {
@@ -439,6 +453,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const spanTags = card.querySelectorAll('.text-label-sm');
                     if (spanTags.length >= 2) {
                         spanTags[0].textContent = idea.status;
+                        // Apply status-based colors
+                        spanTags[0].className = 'px-3 py-1 rounded-full font-label-sm text-label-sm ' + getStatusBadgeClasses(idea.status);
                         spanTags[1].textContent = idea.category;
                     }
 
@@ -651,6 +667,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (tagSpans && tagSpans.length >= 2) {
                     tagSpans[0].textContent = idea.category;
                     tagSpans[1].textContent = idea.status;
+                    // Apply status-based colors
+                    tagSpans[1].className = 'px-3 py-1 rounded-full font-label-sm text-label-sm ' + getStatusBadgeClasses(idea.status);
                 }
 
                 // Description — render rich HTML content (already sanitized server-side)

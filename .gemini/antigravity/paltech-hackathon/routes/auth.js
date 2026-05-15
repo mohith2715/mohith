@@ -10,6 +10,12 @@ router.post('/register', (req, res) => {
     if (!email || !password) {
         return res.status(400).json({ error: 'Email and password are required' });
     }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'Invalid email format' });
+    }
     
     // We default new users to 'SUBMITTER'. Reviewers are seeded/added by admins.
     let role = 'SUBMITTER';
