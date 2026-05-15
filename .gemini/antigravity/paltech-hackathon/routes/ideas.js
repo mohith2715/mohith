@@ -172,9 +172,8 @@ router.delete('/:id', requireAuth, (req, res) => {
             return res.status(403).json({ error: 'Forbidden: You can only delete your own ideas' });
         }
 
-        if (idea.status === 'Selected' || idea.status === 'Rejected') {
-            return res.status(400).json({ error: 'Cannot delete an idea that has been Selected or Rejected' });
-        }
+        // Deletion is allowed for owners and reviewers regardless of status
+        // to ensure users can manage their collection.
 
         db.prepare('DELETE FROM ideas WHERE id = ?').run(ideaId);
         res.json({ message: 'Idea deleted successfully' });

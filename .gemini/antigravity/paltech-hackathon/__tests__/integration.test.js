@@ -119,28 +119,28 @@ describe('Ideas Management System - Full Acceptance Testing (AC1-AC17)', () => {
         expect(resIdea.body.status).toBe('Under Review');
     });
 
-    test('AC10: Edit/Delete blocked after final state', async () => {
-        // Move to Selected
+    test('AC11: Review note visible', async () => {
+        // Move to Selected first
         await reviewer.post(`/api/ideas/${ideaId}/transition`)
             .send({ status: 'Selected', review_note: 'Hired!' });
 
-        // Try to edit
-        const resEdit = await submitter1.put(`/api/ideas/${ideaId}`).send({ title: 'New Title' });
-        expect(resEdit.status).toBe(400);
-
-        // Try to delete
-        const resDelete = await submitter1.delete(`/api/ideas/${ideaId}`);
-        expect(resDelete.status).toBe(400);
-        expect(resDelete.body.error).toContain('Cannot delete');
-    });
-
-    test('AC11: Review note visible', async () => {
         const resIdea = await submitter1.get(`/api/ideas/${ideaId}`);
         expect(resIdea.body.review_note).toBe('Hired!');
     });
 
+    test('AC10: Edit blocked after final state, but Delete allowed', async () => {
+        // Try to edit
+        const resEdit = await submitter1.put(`/api/ideas/${ideaId}`).send({ title: 'New Title' });
+        expect(resEdit.status).toBe(400);
+
+        // Deletion is now allowed regardless of status
+        const resDelete = await submitter1.delete(`/api/ideas/${ideaId}`);
+        expect(resDelete.status).toBe(200);
+    });
+
     test('AC12, AC13, AC14: Filtering, Searching, and Sorting', async () => {
         // Seed more data
+        await submitter1.post('/api/ideas').send({ title: 'Acceptance Idea', description: 'desc', category: 'Tech' });
         await submitter1.post('/api/ideas').send({ title: 'Beta Idea', description: 'desc', category: 'Process' });
         await submitter1.post('/api/ideas').send({ title: 'Gamma Idea', description: 'desc', category: 'Tech' });
 
