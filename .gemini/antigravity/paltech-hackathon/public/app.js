@@ -233,6 +233,36 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        let modalOpen = false;
+        const showConfirmModal = (title, message) => {
+            modalOpen = true;
+            return new Promise((resolve) => {
+                const modal = document.getElementById('custom-modal');
+                const titleEl = document.getElementById('modal-title');
+                const msgEl = document.getElementById('modal-message');
+                const confirmBtn = document.getElementById('modal-confirm');
+                const cancelBtn = document.getElementById('modal-cancel');
+
+                titleEl.textContent = title;
+                msgEl.textContent = message;
+                modal.classList.remove('hidden');
+
+                const cleanup = (val) => {
+                    modalOpen = false;
+                    modal.classList.add('hidden');
+                    confirmBtn.removeEventListener('click', onConfirm);
+                    cancelBtn.removeEventListener('click', onCancel);
+                    resolve(val);
+                };
+
+                const onConfirm = () => cleanup(true);
+                const onCancel = () => cleanup(false);
+
+                confirmBtn.addEventListener('click', onConfirm);
+                cancelBtn.addEventListener('click', onCancel);
+            });
+        };
+
         const loadIdeas = async () => {
             try {
                 let url = `/api/ideas?page=${currentPage}`;
@@ -286,7 +316,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Handle clicks to navigate to details
                     card.style.cursor = 'pointer';
-                    card.addEventListener('click', () => {
+                    card.addEventListener('click', (e) => {
+                        if (modalOpen) return;
+                        // Prevent navigation if a button (like Delete or Edit) was clicked
+                        if (e.target.closest('button')) return;
                         window.location.href = `/idea.html?id=${idea.id}`;
                     });
 
@@ -299,7 +332,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 btn.style.display = 'block';
                                 btn.addEventListener('click', async (e) => {
                                     e.stopPropagation();
-                                    if (confirm('Are you sure you want to delete this idea?')) {
+                                    e.preventDefault();
+                                    const confirmed = await showConfirmModal('Delete Idea', 'Are you sure you want to delete this idea? This action cannot be undone.');
+                                    if (confirmed) {
                                         try {
                                             const res = await fetch(`/api/ideas/${idea.id}`, { method: 'DELETE' });
                                             if (res.ok) {

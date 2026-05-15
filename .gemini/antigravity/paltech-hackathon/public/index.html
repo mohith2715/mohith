@@ -291,4 +291,14 @@
 <button class="md:hidden fixed bottom-20 right-6 w-14 h-14 rounded-full bg-primary text-on-primary shadow-lg flex items-center justify-center active:scale-95 transition-transform z-40">
 <span class="material-symbols-outlined text-[28px]" data-icon="add">add</span>
 </button>
-<script src="/app.js"></script></body></html>
+    <div id="custom-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-surface-container-lowest w-full max-w-sm rounded-xl p-lg shadow-xl animate-in fade-in zoom-in duration-200">
+            <h3 class="font-headline-sm text-headline-sm text-primary mb-2" id="modal-title">Confirm Action</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-6" id="modal-message">Are you sure you want to proceed?</p>
+            <div class="flex justify-end gap-md">
+                <button id="modal-cancel" class="px-md py-2 rounded-lg border border-outline-variant font-label-md text-label-md hover:bg-surface-container-low transition-colors">Cancel</button>
+                <button id="modal-confirm" class="px-md py-2 rounded-lg bg-error text-on-error font-label-md text-label-md hover:opacity-90 transition-all">Delete</button>
+            </div>
+        </div>
+    </div>
+    <script src="/app.js"></script></body></html>
