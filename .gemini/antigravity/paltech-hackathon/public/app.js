@@ -1,3 +1,27 @@
+// Theme Initialization (runs immediately to prevent FOUC)
+const initTheme = () => {
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+    } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+    }
+};
+initTheme();
+
+window.toggleTheme = () => {
+    if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+        localStorage.theme = 'light';
+    } else {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+        localStorage.theme = 'dark';
+    }
+};
+
 // Global Modal Helper
 const getModal = () => {
     let modal = document.getElementById('custom-modal');
@@ -98,6 +122,21 @@ function setupPasswordToggles() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Inject Theme Toggle Button
+    const headerFlex = document.querySelector('header > div');
+    if (headerFlex) {
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface flex items-center justify-center absolute right-4 md:right-16 top-1/2 -translate-y-1/2 z-50';
+        toggleBtn.innerHTML = `<span class="material-symbols-outlined" style="font-size: 20px;">dark_mode</span>`;
+        toggleBtn.onclick = () => {
+            window.toggleTheme();
+            // Update icon visually if desired, though standard is just rotating them
+        };
+        // Ensure parent has position relative if needed, but header is usually fixed/relative
+        document.querySelector('header').style.position = 'fixed';
+        document.querySelector('header').appendChild(toggleBtn);
+    }
+
     const path = window.location.pathname;
 
     document.querySelectorAll('[data-icon="search"]').forEach(el => {
