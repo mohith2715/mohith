@@ -162,6 +162,14 @@
 </select>
 <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-outline" data-icon="expand_more">expand_more</span>
 </div>
+<div class="relative min-w-[140px]">
+<select id="sort-by" class="w-full pl-3 pr-8 py-2 bg-white border border-outline-variant rounded-lg appearance-none focus:ring-1 focus:ring-secondary font-body-md text-body-md">
+<option value="created_at">Newest</option>
+<option value="avg_rating">Highest Rated</option>
+<option value="rating_count">Most Rated</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-outline" data-icon="sort">sort</span>
+</div>
 </div>
 </div>
 </section>
@@ -297,7 +305,7 @@
             <p class="font-body-md text-body-md text-on-surface-variant mb-6" id="modal-message">Are you sure you want to proceed?</p>
             <div class="flex justify-end gap-md">
                 <button id="modal-cancel" class="px-md py-2 rounded-lg border border-outline-variant font-label-md text-label-md hover:bg-surface-container-low transition-colors">Cancel</button>
-                <button id="modal-confirm" class="px-md py-2 rounded-lg bg-error text-on-error font-label-md text-label-md hover:opacity-90 transition-all">Delete</button>
+                <button id="modal-confirm" class="px-md py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:opacity-90 transition-all">Confirm</button>
             </div>
         </div>
     </div>

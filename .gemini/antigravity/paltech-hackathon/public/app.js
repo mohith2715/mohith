@@ -1,7 +1,69 @@
-// Utility to show error
-function showError(msg) {
-    alert(msg);
+// Global Modal Helper
+const getModal = () => {
+    let modal = document.getElementById('custom-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'custom-modal';
+        modal.className = 'hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4';
+        modal.innerHTML = `
+            <div class="bg-surface-container-lowest w-full max-w-sm rounded-xl p-lg shadow-xl animate-in fade-in zoom-in duration-200">
+                <h3 class="font-headline-sm text-headline-sm text-primary mb-2" id="modal-title">Notification</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant mb-6" id="modal-message"></p>
+                <div class="flex justify-end gap-md">
+                    <button id="modal-cancel" class="px-md py-2 rounded-lg border border-outline-variant font-label-md text-label-md hover:bg-surface-container-low transition-colors">Cancel</button>
+                    <button id="modal-confirm" class="px-md py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:opacity-90 transition-all">OK</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    return modal;
+};
+
+function showError(msg, title = 'Error') {
+    return showConfirmModal(title, msg, true);
 }
+
+const showConfirmModal = (title, message, isAlert = false) => {
+    return new Promise((resolve) => {
+        const modal = getModal();
+        const titleEl = modal.querySelector('#modal-title');
+        const msgEl = modal.querySelector('#modal-message');
+        const confirmBtn = modal.querySelector('#modal-confirm');
+        const cancelBtn = modal.querySelector('#modal-cancel');
+
+        titleEl.textContent = title;
+        msgEl.textContent = message;
+        confirmBtn.textContent = isAlert ? 'OK' : 'Confirm';
+        
+        if (isAlert) {
+            cancelBtn.classList.add('hidden');
+            confirmBtn.classList.replace('bg-error', 'bg-primary');
+            confirmBtn.classList.add('bg-primary');
+        } else {
+            cancelBtn.classList.remove('hidden');
+            if (title.toLowerCase().includes('delete')) {
+                confirmBtn.classList.replace('bg-primary', 'bg-error');
+                confirmBtn.classList.add('bg-error');
+            } else {
+                confirmBtn.classList.replace('bg-error', 'bg-primary');
+                confirmBtn.classList.add('bg-primary');
+            }
+        }
+
+        modal.classList.remove('hidden');
+
+        const cleanup = (val) => {
+            modal.classList.add('hidden');
+            confirmBtn.onclick = null;
+            cancelBtn.onclick = null;
+            resolve(val);
+        };
+
+        confirmBtn.onclick = () => cleanup(true);
+        cancelBtn.onclick = () => cleanup(false);
+    });
+};
 
 window.logout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -175,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentSearch = '';
         let currentCategory = '';
         let currentStatus = '';
+        let currentSort = 'created_at';
 
         let currentUser = null;
         // Check authentication immediately
@@ -226,6 +289,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadIdeas();
             });
         }
+        if (selects[2]) {
+            selects[2].addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                currentPage = 1;
+                loadIdeas();
+            });
+        }
 
         // Wire up Tabs
         const dashboardTab = Array.from(document.querySelectorAll('a')).find(a => a.textContent === 'Dashboard');
@@ -269,35 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        let modalOpen = false;
-        const showConfirmModal = (title, message) => {
-            modalOpen = true;
-            return new Promise((resolve) => {
-                const modal = document.getElementById('custom-modal');
-                const titleEl = document.getElementById('modal-title');
-                const msgEl = document.getElementById('modal-message');
-                const confirmBtn = document.getElementById('modal-confirm');
-                const cancelBtn = document.getElementById('modal-cancel');
-
-                titleEl.textContent = title;
-                msgEl.textContent = message;
-                modal.classList.remove('hidden');
-
-                const cleanup = (val) => {
-                    modalOpen = false;
-                    modal.classList.add('hidden');
-                    confirmBtn.removeEventListener('click', onConfirm);
-                    cancelBtn.removeEventListener('click', onCancel);
-                    resolve(val);
-                };
-
-                const onConfirm = () => cleanup(true);
-                const onCancel = () => cleanup(false);
-
-                confirmBtn.addEventListener('click', onConfirm);
-                cancelBtn.addEventListener('click', onCancel);
-            });
-        };
+        // Dashboard Logic (was below modal)
 
         const loadIdeas = async () => {
             try {
@@ -306,6 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (currentCategory && currentCategory !== 'Category') url += `&category=${encodeURIComponent(currentCategory)}`;
                 if (currentStatus && currentStatus !== 'Status') url += `&status=${encodeURIComponent(currentStatus)}`;
                 if (currentTab === 'myideas') url += `&mine=true`;
+                if (currentSort) url += `&sortBy=${currentSort}`;
 
                 const res = await fetch(url);
                 if (!res.ok) {
@@ -557,21 +600,39 @@ document.addEventListener('DOMContentLoaded', () => {
                         stars.forEach((btn, index) => {
                             btn.addEventListener('click', () => {
                                 selectedRating = index + 1;
-                                // color them
-                                stars.forEach((b, i) => {
-                                    const span = b.querySelector('span');
-                                    if (i < selectedRating) {
-                                        span.style.fontVariationSettings = "'FILL' 1";
-                                        b.classList.replace('text-outline-variant', 'text-secondary');
-                                    } else {
-                                        span.style.fontVariationSettings = "'FILL' 0";
-                                        b.classList.replace('text-secondary', 'text-outline-variant');
-                                    }
-                                });
-                                // trigger rating
                                 window.rateIdea(id, selectedRating);
                             });
                         });
+
+                        // Show existing rating
+                        if (idea.user_rating) {
+                            stars.forEach((b, i) => {
+                                const span = b.querySelector('span');
+                                if (i < idea.user_rating) {
+                                    span.style.fontVariationSettings = "'FILL' 1";
+                                    b.classList.replace('text-outline-variant', 'text-secondary');
+                                } else {
+                                    span.style.fontVariationSettings = "'FILL' 0";
+                                    b.classList.replace('text-secondary', 'text-outline-variant');
+                                }
+                            });
+                            
+                            const removeContainer = document.getElementById('remove-rating-container');
+                            const removeBtn = document.getElementById('remove-rating-btn');
+                            if (removeContainer && removeBtn) {
+                                removeContainer.classList.remove('hidden');
+                                removeBtn.onclick = async () => {
+                                    if (await showConfirmModal('Remove Rating', 'Are you sure you want to remove your rating?')) {
+                                        try {
+                                            const res = await fetch(`/api/ideas/${id}/rate`, { method: 'DELETE' });
+                                            if (res.ok) window.location.reload();
+                                        } catch (err) {
+                                            showError('Failed to remove rating');
+                                        }
+                                    }
+                                };
+                            }
+                        }
                     }
                 }
 
@@ -623,7 +684,7 @@ window.rateIdea = async (id, rating) => {
         window.location.reload();
     } else {
         const data = await res.json();
-        alert(data.error);
+        showError(data.error);
     }
 };
 
@@ -637,6 +698,6 @@ window.updateStatus = async (id, status, review_note) => {
         window.location.reload();
     } else {
         const data = await res.json();
-        alert(data.error);
+        showError(data.error);
     }
 };

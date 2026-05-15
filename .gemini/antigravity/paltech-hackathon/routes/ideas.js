@@ -91,13 +91,14 @@ router.get('/:id', (req, res) => {
             SELECT i.*, 
                    u.email as submitter_email,
                    COALESCE(AVG(r.rating), 0) as avg_rating,
-                   COUNT(r.id) as rating_count
+                   COUNT(r.id) as rating_count,
+                   (SELECT rating FROM ratings WHERE idea_id = i.id AND user_id = ?) as user_rating
             FROM ideas i
             JOIN users u ON i.submitter_id = u.id
             LEFT JOIN ratings r ON i.id = r.idea_id
             WHERE i.id = ?
             GROUP BY i.id
-        `).get(req.params.id);
+        `).get(req.session.userId, req.params.id);
 
         if (!idea) {
             return res.status(404).json({ error: 'Idea not found' });
@@ -172,8 +173,11 @@ router.delete('/:id', requireAuth, (req, res) => {
             return res.status(403).json({ error: 'Forbidden: You can only delete your own ideas' });
         }
 
-        // Deletion is allowed for owners and reviewers regardless of status
-        // to ensure users can manage their collection.
+        // Restriction: Submitter cannot delete Selected or Rejected ideas
+        const finalStatuses = ['Selected', 'Rejected'];
+        if (req.session.role !== 'REVIEWER' && finalStatuses.includes(idea.status)) {
+            return res.status(400).json({ error: `Cannot delete an idea that has been ${idea.status}` });
+        }
 
         db.prepare('DELETE FROM ideas WHERE id = ?').run(ideaId);
         res.json({ message: 'Idea deleted successfully' });

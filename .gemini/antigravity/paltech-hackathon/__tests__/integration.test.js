@@ -133,9 +133,14 @@ describe('Ideas Management System - Full Acceptance Testing (AC1-AC17)', () => {
         const resEdit = await submitter1.put(`/api/ideas/${ideaId}`).send({ title: 'New Title' });
         expect(resEdit.status).toBe(400);
 
-        // Deletion is now allowed regardless of status
+        // Deletion is now BLOCKED for submitters in final states
         const resDelete = await submitter1.delete(`/api/ideas/${ideaId}`);
-        expect(resDelete.status).toBe(200);
+        expect(resDelete.status).toBe(400);
+        expect(resDelete.body.error).toContain('Cannot delete');
+
+        // But ALLOWED for reviewers
+        const resDeleteReviewer = await reviewer.delete(`/api/ideas/${ideaId}`);
+        expect(resDeleteReviewer.status).toBe(200);
     });
 
     test('AC12, AC13, AC14: Filtering, Searching, and Sorting', async () => {
