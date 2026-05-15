@@ -396,7 +396,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Handle clicks to navigate to details
                     card.style.cursor = 'pointer';
                     card.addEventListener('click', (e) => {
-                        if (modalOpen) return;
                         // Prevent navigation if a button (like Delete or Edit) was clicked
                         if (e.target.closest('button')) return;
                         window.location.href = `/idea.html?id=${idea.id}`;
@@ -595,7 +594,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (idea.submitter_id === user.id) {
                         yourRatingSection.style.display = 'none';
                     } else {
-                        const stars = yourRatingSection.querySelectorAll('button');
+                        const starsContainer = yourRatingSection.querySelector('.flex.gap-2');
+                        const stars = starsContainer ? starsContainer.querySelectorAll('button') : [];
                         let selectedRating = 0;
                         stars.forEach((btn, index) => {
                             btn.addEventListener('click', () => {
