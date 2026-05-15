@@ -23,4 +23,4 @@ The application is now complete and fulfills all functional and aesthetic requir
 - **Manual Verification**: Navigation, Modals, and Ratings verified via browser testing.
 
 ### Final Commit Hash
-- `968412a` (pending commit)
+- `5e6c673`
