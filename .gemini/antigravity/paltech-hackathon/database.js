@@ -42,6 +42,17 @@ function initDb() {
             FOREIGN KEY (idea_id) REFERENCES ideas(id) ON DELETE CASCADE,
             UNIQUE(user_id, idea_id)
         );
+
+        CREATE TABLE IF NOT EXISTS votes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            idea_id INTEGER NOT NULL,
+            vote_type TEXT NOT NULL CHECK(vote_type IN ('UP', 'DOWN')),
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (idea_id) REFERENCES ideas(id) ON DELETE CASCADE,
+            UNIQUE(user_id, idea_id)
+        );
     `);
 
     // Seed Reviewer Account
