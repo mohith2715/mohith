@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "surface-container-high": "#e6e8ea",
+                  "inverse-on-surface": "#eff1f3",
+                  "secondary-container": "#2170e4",
+                  "on-secondary-fixed": "#001a42",
+                  "on-error": "#ffffff",
+                  "outline-variant": "#c6c6cd",
+                  "on-tertiary-fixed": "#271901",
+                  "tertiary-fixed": "#fcdeb5",
+                  "surface-variant": "#e0e3e5",
+                  "on-secondary-container": "#fefcff",
+                  "on-tertiary-container": "#98805d",
+                  "on-tertiary": "#ffffff",
+                  "tertiary-container": "#271901",
+                  "surface": "#f7f9fb",
+                  "surface-tint": "#565e74",
+                  "inverse-surface": "#2d3133",
+                  "tertiary": "#000000",
+                  "outline": "#76777d",
+                  "primary": "#000000",
+                  "primary-container": "#131b2e",
+                  "on-tertiary-fixed-variant": "#574425",
+                  "primary-fixed": "#dae2fd",
+                  "surface-dim": "#d8dadc",
+                  "surface-container-lowest": "#ffffff",
+                  "on-surface": "#191c1e",
+                  "on-secondary": "#ffffff",
+                  "primary-fixed-dim": "#bec6e0",
+                  "on-secondary-fixed-variant": "#004395",
+                  "surface-container-low": "#f2f4f6",
+                  "on-primary-container": "#7c839b",
+                  "inverse-primary": "#bec6e0",
+                  "error-container": "#ffdad6",
+                  "background": "#f7f9fb",
+                  "surface-container-highest": "#e0e3e5",
+                  "surface-bright": "#f7f9fb",
+                  "secondary": "#0058be",
+                  "on-error-container": "#93000a",
+                  "on-primary-fixed": "#131b2e",
+                  "error": "#ba1a1a",
+                  "secondary-fixed": "#d8e2ff",
+                  "on-background": "#191c1e",
+                  "secondary-fixed-dim": "#adc6ff",
+                  "on-primary": "#ffffff",
+                  "tertiary-fixed-dim": "#dec29a",
+                  "surface-container": "#eceef0",
+                  "on-surface-variant": "#45464d",
+                  "on-primary-fixed-variant": "#3f465c"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.125rem",
+                  "lg": "0.25rem",
+                  "xl": "0.5rem",
+                  "full": "0.75rem"
+          },
+          "spacing": {
+                  "sm": "12px",
+                  "base": "8px",
+                  "lg": "24px",
+                  "md": "16px",
+                  "xl": "32px",
+                  "margin-mobile": "20px",
+                  "xs": "4px",
+                  "gutter-mobile": "16px"
+          },
+          "fontFamily": {
+                  "headline-sm": ["Manrope"],
+                  "headline-lg-mobile": ["Manrope"],
+                  "label-md": ["Manrope"],
+                  "headline-lg": ["Manrope"],
+                  "body-md": ["Manrope"],
+                  "label-sm": ["Manrope"],
+                  "headline-md": ["Manrope"],
+                  "body-sm": ["Manrope"],
+                  "body-lg": ["Manrope"]
+          },
+          "fontSize": {
+                  "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                  "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                  "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                  "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                  "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                  "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                  "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                  "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body { font-family: 'Manrope', sans-serif; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-20">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface dark:bg-surface-dim shadow-[0_4px_15px_rgba(0,0,0,0.04)] z-50">
+<div class="flex justify-between items-center px-margin-mobile py-base">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary" data-icon="lightbulb">lightbulb</span>
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary">IdeaFlow</span>
+</div>
+<button class="hover:bg-surface-container-low transition-colors duration-200 active:scale-95 transition-transform p-base rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="search">search</span>
+</button>
+</div>
+</header>
+<main class="px-margin-mobile pt-xl">
+<!-- Header Section -->
+<section class="mb-xl">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Submit Your Idea</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">Share your innovative thoughts with the team and shape the future.</p>
+</section>
+<!-- Form Section -->
+<form class="space-y-lg">
+<!-- Title Input -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="idea-title">Title</label>
+<input class="w-full px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-xl focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all font-body-md text-body-md" id="idea-title" placeholder="Enter a concise title" type="text"/>
+</div>
+<!-- Category Dropdown -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="idea-category">Category</label>
+<div class="relative">
+<select class="w-full px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-xl appearance-none focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all font-body-md text-body-md pr-xl" id="idea-category">
+<option value="tech">Tech</option>
+<option value="process">Process</option>
+<option value="product">Product</option>
+</select>
+<span class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- Description Textarea -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="idea-description">Description</label>
+<textarea class="w-full px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-xl focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all font-body-md text-body-md resize-none" id="idea-description" placeholder="Describe your idea in detail..." rows="6"></textarea>
+</div>
+<!-- Visual Context Placeholder Card -->
+<div class="bg-surface-container-low rounded-xl p-md flex items-center gap-md mb-xl shadow-[0_4px_15px_rgba(0,0,0,0.04)]">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A clean, brightly lit professional workspace with a minimalist white desk, a sleek laptop, and a single green plant. The atmosphere is calm and focused, featuring high-key natural lighting and a palette of soft grays and crisp whites. This setting represents a modern corporate environment designed for creative brainstorming and absolute clarity of thought." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTliYuW2G1-5LErOIZtXzLg92bhGQz0rQdZUP_67I4Yrmvz-5JUrdV8qpXGUdCE1bu2aqNbYm0Q8IRKFRAm1biWOABv4H5-vwKzj14GmHJdSMZnSfkDsMqY0w2HvkB4ExxvQ31AStBeJrW6c0iNkDBzaP8_KKnK16Hw-oBjNi8D3MdSXKKsZPGzTeNmvlB84d_W_uzuTDz-EyQf4niFvI_ohVHLLj9GQypxf8pXeA7g54zujJKLYwZYU0TC7i6DJiOWYRKRlFykrs"/>
+</div>
+<div class="flex-1">
+<h4 class="font-label-md text-label-md text-on-surface">Submission Guide</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Focus on the problem you're solving and the expected impact.</p>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-md pt-base pb-xl">
+<button class="w-full h-[48px] bg-primary text-on-primary font-label-md text-label-md rounded-xl hover:bg-primary-container transition-colors active:scale-95 transition-transform" type="submit">
+          Submit Idea
+        </button>
+<button class="w-full h-[48px] border border-primary text-primary font-label-md text-label-md rounded-xl hover:bg-surface-container-low transition-colors active:scale-95 transition-transform" type="button">
+          Cancel
+        </button>
+</div>
+</form>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface dark:bg-surface-dim shadow-[0_-4px_15px_rgba(0,0,0,0.04)]">
+<div class="flex justify-around items-center h-16 px-4">
+<!-- Feed -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-secondary-fixed transition-colors active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-label-sm text-label-sm">Feed</span>
+</a>
+<!-- Add (ACTIVE) -->
+<a class="flex flex-col items-center justify-center text-primary dark:text-secondary-fixed font-semibold active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="add_circle" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+<span class="font-label-sm text-label-sm">Add</span>
+</a>
+<!-- Inbox -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-secondary-fixed transition-colors active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+<span class="font-label-sm text-label-sm">Inbox</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-secondary-fixed transition-colors active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</div>
+</nav>
+<script src="/app.js"></script></body></html>

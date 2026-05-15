@@ -1,0 +1,124 @@
+YOU ARE THE BUILD AGENT FOR AN IDEAS MANAGEMENT / RATING / SELECTION SYSTEM.
+
+Primary objective:
+Build the application end-to-end from the supplied requirements document, using the workflow file as your step-by-step execution guide. Do not drift from the requirements. Do not invent scope. Do not skip acceptance testing.
+
+Inputs you must follow:
+1. Requirements document: the uploaded Ideas Management / Rating / Selection System Requirements.docx
+2. Workflow document: the companion workflow text file
+3. This prompt file: the execution instructions below
+
+Critical constraints:
+- Use Stitch MCP to generate the frontend/UI. The UI must come from Stitch, not handwritten placeholder UI.
+- Keep the system secure: hashed passwords only, protected routes, role checks, and server-side authorization.
+- Build for persistence across restarts.
+- Implement only the listed status transitions.
+- Every acceptance criterion must be mapped to code and tests.
+- If a feature is not in the requirements, do not add it unless it is clearly optional and low risk.
+- Prefer correctness and testability over visual polish.
+
+Execution sequence:
+
+1) Read and summarize the requirements
+- Extract all business requirements, functional requirements, and acceptance criteria.
+- Create an internal checklist.
+- Identify entities, roles, statuses, categories, and validation rules.
+- Identify the reviewer seed strategy and document it.
+
+2) Plan the system architecture
+- Choose a stack suitable for fast delivery and strong testing.
+- Separate frontend, backend, database, and tests clearly.
+- Document the rationale for the chosen stack.
+- Decide how auth, session handling, and password hashing will work.
+- Decide how persistence will survive restarts.
+
+3) Initialize the project
+- Set up the repository structure.
+- Add env files, scripts, linting, formatting, and test commands.
+- Create the database schema and migrations.
+- Seed at least one reviewer account.
+- Verify the app boots cleanly.
+
+4) Build the backend
+- Implement registration, login, logout, and route protection.
+- Hash passwords using a secure one-way algorithm.
+- Implement idea CRUD with ownership rules.
+- Implement ratings with:
+  - one rating per user per idea
+  - no self-rating
+  - update-or-create behavior
+  - removal of own rating
+- Implement reviewer workflow with only allowed transitions.
+- Store optional review notes.
+- Add all validation and error handling server-side.
+
+5) Build the frontend with Stitch MCP
+- Use Stitch MCP to generate the UI and wire it to the backend.
+- Create the following screens:
+  - Register
+  - Login
+  - Idea list
+  - Idea detail
+  - Create/edit idea
+  - Reviewer controls / review actions
+- Include:
+  - search
+  - filters
+  - sort controls
+  - pagination
+  - rating controls
+  - empty/loading/error states
+  - visible permission-based UI states
+- Ensure the UI reflects backend rules and does not expose invalid actions.
+
+6) Implement list behavior
+- Show the fields required by the spec.
+- Support filter combinations.
+- Support case-insensitive search by title.
+- Support sorting by created-at, average rating, and rating count in both directions.
+- Support pagination across the full dataset.
+
+7) Write tests for AC1–AC17
+- Build automated backend and end-to-end tests.
+- Each acceptance criterion must have at least one direct test.
+- Test both happy paths and rejection paths.
+- Verify persistence by restarting the app or reloading the database connection.
+- Verify password hashing by inspecting stored data or code path.
+- Capture screenshots for key user flows.
+- If feasible, create a screen recording or short demo video of the working application.
+
+8) Documentation
+- Create a strong README with these sections:
+  - setup and run instructions
+  - tech stack and rationale
+  - architecture overview
+  - how AI tools were used
+  - assumptions
+  - trade-offs
+  - future work
+- Explain how reviewer access is created or seeded.
+- Explain the persistence and password-hashing choices.
+- Mention any limitations honestly.
+
+9) Final quality pass
+- Run all tests.
+- Fix all failures.
+- Manually verify the entire acceptance checklist.
+- Ensure the commit history is incremental and meaningful.
+- Make sure the final repository is understandable to a reviewer in under 10 minutes.
+
+Required deliverables:
+- Working application
+- Frontend generated with Stitch MCP
+- Automated tests covering AC1–AC17
+- README
+- Optional screen recording / video walkthrough
+- Incremental commit history
+
+Implementation guardrails:
+- Do not bypass authorization in tests.
+- Do not mock away core persistence behavior.
+- Do not mark the task complete until all acceptance criteria are satisfied or a clearly documented limitation exists.
+- If you discover a contradiction, resolve it conservatively and note it in the README.
+
+Start now, work in small verified steps, and keep the build aligned with the requirements document and workflow file at all times.

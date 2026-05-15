@@ -1,0 +1,147 @@
+IDEAS MANAGEMENT APP — ANTIGRAVITY AGENT WORKFLOW
+==================================================
+
+Source requirements document:
+- Ideas Management / Rating / Selection System Requirements.docx
+
+Goal:
+Build the application end-to-end inside Antigravity using Stitch MCP for the UI/frontend, with a strict workflow that keeps the agent from losing context, missing acceptance criteria, or skipping testing.
+
+Core rules:
+1. Follow this workflow in order.
+2. Read the requirements document first and treat it as the source of truth.
+3. Use Stitch MCP to generate the frontend UI.
+4. Persist all data reliably.
+5. Enforce authentication, authorization, validation, and rating integrity on the server.
+6. Test every acceptance criterion.
+7. Produce a short demo video or screen recording if possible.
+8. Commit incrementally with meaningful commit messages.
+
+Recommended build phases:
+
+Phase 0 — Requirements digestion
+- Extract all business requirements, functional requirements, and acceptance criteria.
+- Convert them into a checklist.
+- Identify any ambiguities and resolve them conservatively in favor of correctness and testability.
+- Decide the stack and document the decision early.
+
+Phase 1 — Project setup
+- Initialize frontend, backend, database, linting, formatting, environment variables, and test harness.
+- Ensure local startup is one-command simple.
+- Add seed data for at least one reviewer account.
+
+Phase 2 — Data model and persistence
+- Implement users, ideas, ratings, role handling, status handling, categories, and timestamps.
+- Enforce unique email and unique user-per-idea rating constraints.
+- Store passwords hashed only.
+
+Phase 3 — Authentication and authorization
+- Implement register, login, logout, session handling, protected routes, and reviewer-only permissions.
+- Reject any unauthenticated or unauthorized access both in UI and API.
+
+Phase 4 — Stitch MCP frontend
+- Generate all frontend screens using Stitch MCP.
+- Build:
+  - sign-in
+  - register
+  - idea list
+  - idea detail
+  - create/edit idea
+  - reviewer workflow controls
+  - filters/search/sort/pagination
+  - rating controls
+- Make sure empty states, loading states, error states, and permission states are covered.
+
+Phase 5 — Ideas CRUD
+- Create, list, view, edit, and delete ideas.
+- Restrict edit/delete to submitter while idea is still editable.
+- Lock ideas once they reach Selected or Rejected.
+
+Phase 6 — Rating engine
+- Allow rating other users’ ideas only.
+- Prevent self-rating.
+- Allow update/remove of own rating.
+- Keep average rating and count accurate.
+
+Phase 7 — Reviewer workflow
+- Implement only the allowed transitions:
+  - Submitted -> Under Review
+  - Under Review -> Selected
+  - Under Review -> Rejected
+  - Submitted -> Rejected
+- Add optional review notes on final decision.
+- Enforce reviewer-only transitions on the backend.
+
+Phase 8 — Listing, filtering, search, sorting, pagination
+- Build all list controls and ensure they work together.
+- Ensure filters and search apply across the full result set, not just the current page.
+- Sort by created-at, average rating, and rating count.
+
+Phase 9 — Validation and error handling
+- Validate title, category, email, rating range, uniqueness, and transition legality.
+- Surface clear, actionable messages in the UI.
+
+Phase 10 — Acceptance testing
+- Write automated tests that explicitly cover AC1 through AC17.
+- Add backend integration tests and end-to-end tests.
+- Verify persistence across restart.
+- Verify password hashing by inspecting storage or code.
+- Capture screenshots for key flows.
+- If possible, record a video or screen capture of the working app.
+
+Phase 11 — Documentation
+- Write a README with:
+  - setup/run steps
+  - tech stack and rationale
+  - architecture overview
+  - AI usage disclosure
+  - assumptions
+  - trade-offs
+  - future work
+- Explain how reviewer accounts are created/se
+eded.
+
+Phase 12 — Final QA
+- Run all tests.
+- Fix failing tests.
+- Verify the app manually against the acceptance criteria.
+- Confirm the repo contains incremental commits.
+- Produce final handoff notes.
+
+Suggested commit plan:
+1. chore: initialize app structure
+2. feat: add database schema and persistence
+3. feat: implement auth and roles
+4. feat: generate frontend with stitch mcp
+5. feat: implement idea CRUD
+6. feat: implement ratings and reviewer workflow
+7. feat: add filtering search sorting pagination
+8. test: add acceptance coverage
+9. docs: finalize README and handoff
+
+Acceptance test checklist:
+- AC1: register, logout, login, hashed password
+- AC2: protected access blocked
+- AC3: create idea and view details
+- AC4: rate another user’s idea and refresh
+- AC5: block self-rating
+- AC6: update existing rating without increasing count
+- AC7: remove rating and update aggregates
+- AC8: reviewer transitions work
+- AC9: regular user blocked from reviewer actions
+- AC10: edited/deleted blocked after final state
+- AC11: review note visible
+- AC12: filters combine and clear correctly
+- AC13: search works and clears correctly
+- AC14: sorting works in both directions
+- AC15: pagination works across filtered/sorted set
+- AC16: validation errors are shown clearly
+- AC17: data survives restart
+
+Definition of done:
+- App works locally
+- All acceptance criteria are tested
+- UI built through Stitch MCP
+- README complete
+- Optional recording/video produced
+- No major console errors

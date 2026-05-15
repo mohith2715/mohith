@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Register - Ideas Management System</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-fixed": "#001a42",
+                    "surface-tint": "#565e74",
+                    "tertiary": "#000000",
+                    "tertiary-container": "#271901",
+                    "on-primary-container": "#7c839b",
+                    "surface-container-low": "#f2f4f6",
+                    "secondary-fixed": "#d8e2ff",
+                    "on-tertiary-fixed": "#271901",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#dec29a",
+                    "surface-container-highest": "#e0e3e5",
+                    "secondary-container": "#2170e4",
+                    "on-error": "#ffffff",
+                    "surface-container": "#eceef0",
+                    "tertiary-fixed": "#fcdeb5",
+                    "secondary": "#0058be",
+                    "primary-container": "#131b2e",
+                    "on-primary-fixed-variant": "#3f465c",
+                    "surface-variant": "#e0e3e5",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed": "#131b2e",
+                    "background": "#f7f9fb",
+                    "outline-variant": "#c6c6cd",
+                    "on-background": "#191c1e",
+                    "on-secondary-fixed-variant": "#004395",
+                    "primary": "#000000",
+                    "surface-container-high": "#e6e8ea",
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#f7f9fb",
+                    "on-error-container": "#93000a",
+                    "error": "#ba1a1a",
+                    "surface-bright": "#f7f9fb",
+                    "outline": "#76777d",
+                    "on-tertiary-container": "#98805d",
+                    "on-tertiary-fixed-variant": "#574425",
+                    "inverse-primary": "#bec6e0",
+                    "surface-dim": "#d8dadc",
+                    "inverse-surface": "#2d3133",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "primary-fixed-dim": "#bec6e0",
+                    "primary-fixed": "#dae2fd",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-surface-variant": "#45464d",
+                    "on-secondary-container": "#fefcff",
+                    "on-surface": "#191c1e",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-mobile": "20px",
+                    "lg": "24px",
+                    "base": "8px",
+                    "xs": "4px",
+                    "xl": "32px",
+                    "md": "16px",
+                    "sm": "12px",
+                    "gutter-mobile": "16px"
+            },
+            "fontFamily": {
+                    "headline-sm": ["Manrope"],
+                    "headline-lg": ["Manrope"],
+                    "body-lg": ["Manrope"],
+                    "body-sm": ["Manrope"],
+                    "label-sm": ["Manrope"],
+                    "headline-lg-mobile": ["Manrope"],
+                    "label-md": ["Manrope"],
+                    "headline-md": ["Manrope"],
+                    "body-md": ["Manrope"]
+            },
+            "fontSize": {
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; background-color: #f7f9fb; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 bg-surface shadow-sm h-16 flex items-center">
+<div class="flex justify-between items-center px-margin-mobile w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary" data-icon="lightbulb">lightbulb</span>
+<h1 class="font-headline-sm text-headline-sm-mobile text-on-background">Create Account</h1>
+</div>
+<a class="font-label-md text-label-md text-primary hover:underline transition-all" href="#">Login</a>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow pt-32 pb-xl px-margin-mobile flex flex-col items-center justify-center">
+<!-- Brand & Heading Cluster -->
+<div class="text-center mb-xl">
+<div class="inline-flex items-center justify-center p-md bg-white rounded-full shadow-sm mb-md">
+<span class="material-symbols-outlined text-[40px] text-primary" data-icon="lightbulb">lightbulb</span>
+</div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-background mb-base">Join the Community</h2>
+<p class="font-body-md text-body-md text-outline">Start sharing and organizing your best ideas today.</p>
+</div>
+<!-- Registration Form Container -->
+<div class="w-full max-w-md bg-surface-container-lowest p-xl rounded-xl shadow-[0_4px_15px_0_rgba(0,0,0,0.04)] border border-surface-container-low">
+<form class="space-y-md">
+<!-- Email Field -->
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface">Email Address</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-md text-outline" data-icon="mail">mail</span>
+<input class="w-full pl-12 pr-md py-3 rounded-lg border-[#E2E8F0] focus:ring-1 focus:ring-secondary focus:border-secondary font-body-md text-body-md bg-white transition-all outline-none" placeholder="you@company.com" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface">Password</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-md text-outline" data-icon="lock">lock</span>
+<input class="w-full pl-12 pr-12 py-3 rounded-lg border-[#E2E8F0] focus:ring-1 focus:ring-secondary focus:border-secondary font-body-md text-body-md bg-white transition-all outline-none" placeholder="••••••••" type="password"/>
+<button class="absolute right-md text-outline hover:text-primary transition-colors flex items-center" type="button">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Confirm Password Field -->
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface">Confirm Password</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-md text-outline" data-icon="lock">lock</span>
+<input class="w-full pl-12 pr-md py-3 rounded-lg border-[#E2E8F0] focus:ring-1 focus:ring-secondary focus:border-secondary font-body-md text-body-md bg-white transition-all outline-none" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<!-- Reviewer Code Field (Optional) -->
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface">Reviewer Code (Optional)</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-md text-outline" data-icon="key">key</span>
+<input id="reviewer-code" class="w-full pl-12 pr-md py-3 rounded-lg border-[#E2E8F0] focus:ring-1 focus:ring-secondary focus:border-secondary font-body-md text-body-md bg-white transition-all outline-none" placeholder="Enter code for reviewer access" type="password"/>
+</div>
+</div>
+<!-- Primary Register Button -->
+<button class="w-full bg-[#0f172a] text-white py-4 rounded-lg font-label-md text-label-md active:scale-95 transition-transform duration-200 mt-md" type="submit">
+                    Register
+                </button>
+<!-- Divider -->
+<div class="relative flex items-center py-md">
+<div class="flex-grow border-t border-outline-variant"></div>
+<span class="flex-shrink mx-4 text-outline font-label-sm text-label-sm">OR</span>
+<div class="flex-grow border-t border-outline-variant"></div>
+</div>
+<!-- Social Sign-up -->
+<button class="w-full bg-white border border-[#E2E8F0] text-on-background py-4 rounded-lg font-label-md text-label-md flex items-center justify-center gap-base hover:bg-surface-container-low transition-colors active:scale-95" type="button">
+<img alt="Google logo" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGGX8DXkgQKsSKCTOLWWu8DQRvNtyWIPLeHDfxX2b4WJuXJI2wnn27uxDNO-MPbNn9snNAWLfnNUqfB2PUhnNz5DIK2S-RcfhYA8-nZfcS6I59u4hZQ8MU4lwzhbGYQptqAFq7Dbhh-RJ_oLC9RaNz8OmWhcyY0YXXLgD2-EdgpHMU9Csy8n_1a-JcZg9CqBBcajV9H9IbV_0K0RNjKvwqwsI3ssm1c19L1CmzTEVjPCV0DTp5yfF7xU2fBfj9_c-d5_4Fu6nWO_M"/>
+                    Sign up with Google
+                </button>
+</form>
+<!-- Footer Link -->
+<div class="mt-xl text-center">
+<p class="font-body-sm text-body-sm text-outline">
+                    Already have an account? 
+                    <a class="text-primary font-semibold hover:underline" href="#">Log In</a>
+</p>
+</div>
+</div>
+<!-- Semantic Design Element (Decorative) -->
+<div class="mt-xl hidden md:block">
+<div class="flex gap-lg items-center opacity-40 grayscale pointer-events-none">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-[32px] text-primary" data-icon="draw">draw</span>
+<span class="font-label-sm text-label-sm mt-xs">Sketch</span>
+</div>
+<div class="w-12 h-[1px] bg-outline-variant"></div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-[32px] text-primary" data-icon="share">share</span>
+<span class="font-label-sm text-label-sm mt-xs">Collaborate</span>
+</div>
+<div class="w-12 h-[1px] bg-outline-variant"></div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-[32px] text-primary" data-icon="rocket_launch">rocket_launch</span>
+<span class="font-label-sm text-label-sm mt-xs">Execute</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Content-suppressed Footer (No Navigation Shell for Transactional screens per mandate) -->
+<footer class="mt-auto py-lg text-center opacity-50">
+<p class="font-label-sm text-label-sm text-outline">© 2024 Ideas Management System. Secure encrypted registration.</p>
+</footer>
+<script src="/app.js"></script></body></html>
