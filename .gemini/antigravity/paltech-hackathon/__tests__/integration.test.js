@@ -12,6 +12,7 @@ describe('Ideas Management System - Full Acceptance Testing (AC1-AC17)', () => {
 
     beforeAll(async () => {
         // Clear tables
+        db.exec('DELETE FROM votes');
         db.exec('DELETE FROM ratings');
         db.exec('DELETE FROM ideas');
         db.exec("DELETE FROM users WHERE email != 'reviewer@example.com'");
@@ -196,5 +197,162 @@ describe('Ideas Management System - Full Acceptance Testing (AC1-AC17)', () => {
         const countAfter = db2.prepare('SELECT COUNT(*) as count FROM ideas').get().count;
         expect(countAfter).toBe(countBefore);
         db2.close();
+    });
+});
+
+describe('Rich Text Editor - Persistence & Sanitization', () => {
+    let agent;
+    let richIdeaId;
+
+    beforeAll(async () => {
+        agent = request.agent(app);
+        // Login as existing user
+        await agent.post('/api/auth/login').send({ email: 'user1@example.com', password: 'password123' });
+    });
+
+    test('Rich text HTML is persisted and returned correctly', async () => {
+        const htmlDesc = '<p>This is <strong>bold</strong> and <em>italic</em> text with a <a href="https://example.com">link</a>.</p><ul><li>Item 1</li><li>Item 2</li></ul>';
+        const res = await agent.post('/api/ideas').send({
+            title: 'Rich Text Idea',
+            description: htmlDesc,
+            category: 'Tech'
+        });
+        expect(res.status).toBe(201);
+        richIdeaId = res.body.id;
+
+        // Verify it's returned correctly
+        const detail = await agent.get(`/api/ideas/${richIdeaId}`);
+        expect(detail.body.description).toContain('<strong>bold</strong>');
+        expect(detail.body.description).toContain('<em>italic</em>');
+        expect(detail.body.description).toContain('<ul>');
+        expect(detail.body.description).toContain('<a href="https://example.com">link</a>');
+    });
+
+    test('XSS content is sanitized on save', async () => {
+        const xssDesc = '<p>Hello</p><script>alert("xss")</script><img onerror="alert(1)" src="x"><strong>Safe</strong>';
+        const res = await agent.post('/api/ideas').send({
+            title: 'XSS Test Idea',
+            description: xssDesc,
+            category: 'Tech'
+        });
+        expect(res.status).toBe(201);
+
+        const detail = await agent.get(`/api/ideas/${res.body.id}`);
+        expect(detail.body.description).not.toContain('<script>');
+        expect(detail.body.description).not.toContain('onerror');
+        expect(detail.body.description).toContain('<strong>Safe</strong>');
+    });
+
+    test('Empty HTML description is rejected', async () => {
+        const res = await agent.post('/api/ideas').send({
+            title: 'Empty Desc Idea',
+            description: '<p><br></p>',
+            category: 'Tech'
+        });
+        expect(res.status).toBe(400);
+    });
+});
+
+describe('Upvote / Downvote System', () => {
+    let submitterA;
+    let submitterB;
+    let voteIdeaId;
+
+    beforeAll(async () => {
+        submitterA = request.agent(app);
+        submitterB = request.agent(app);
+
+        await submitterA.post('/api/auth/login').send({ email: 'user1@example.com', password: 'password123' });
+        await submitterB.post('/api/auth/login').send({ email: 'user2@example.com', password: 'password123' });
+
+        // User A creates an idea for User B to vote on
+        const res = await submitterA.post('/api/ideas').send({
+            title: 'Vote Test Idea',
+            description: 'An idea for testing votes',
+            category: 'Tech'
+        });
+        voteIdeaId = res.body.id;
+    });
+
+    test('User can upvote another user\'s idea', async () => {
+        const res = await submitterB.post(`/api/ideas/${voteIdeaId}/vote`).send({ voteType: 'UP' });
+        expect(res.status).toBe(200);
+        expect(res.body.action).toBe('created');
+
+        const detail = await submitterB.get(`/api/ideas/${voteIdeaId}`);
+        expect(detail.body.upvotes).toBe(1);
+        expect(detail.body.downvotes).toBe(0);
+    });
+
+    test('Clicking same vote again removes it (toggle)', async () => {
+        const res = await submitterB.post(`/api/ideas/${voteIdeaId}/vote`).send({ voteType: 'UP' });
+        expect(res.status).toBe(200);
+        expect(res.body.action).toBe('removed');
+
+        const detail = await submitterB.get(`/api/ideas/${voteIdeaId}`);
+        expect(detail.body.upvotes).toBe(0);
+    });
+
+    test('User can downvote an idea', async () => {
+        const res = await submitterB.post(`/api/ideas/${voteIdeaId}/vote`).send({ voteType: 'DOWN' });
+        expect(res.status).toBe(200);
+        expect(res.body.action).toBe('created');
+
+        const detail = await submitterB.get(`/api/ideas/${voteIdeaId}`);
+        expect(detail.body.downvotes).toBe(1);
+    });
+
+    test('User can switch vote direction', async () => {
+        const res = await submitterB.post(`/api/ideas/${voteIdeaId}/vote`).send({ voteType: 'UP' });
+        expect(res.status).toBe(200);
+        expect(res.body.action).toBe('switched');
+
+        const detail = await submitterB.get(`/api/ideas/${voteIdeaId}`);
+        expect(detail.body.upvotes).toBe(1);
+        expect(detail.body.downvotes).toBe(0);
+    });
+
+    test('User can remove vote via DELETE', async () => {
+        const res = await submitterB.delete(`/api/ideas/${voteIdeaId}/vote`);
+        expect(res.status).toBe(200);
+
+        const detail = await submitterB.get(`/api/ideas/${voteIdeaId}`);
+        expect(detail.body.upvotes).toBe(0);
+        expect(detail.body.user_vote).toBeNull();
+    });
+
+    test('User cannot vote on their own idea', async () => {
+        const res = await submitterA.post(`/api/ideas/${voteIdeaId}/vote`).send({ voteType: 'UP' });
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe('Cannot vote on your own idea');
+    });
+
+    test('Invalid voteType is rejected', async () => {
+        const res = await submitterB.post(`/api/ideas/${voteIdeaId}/vote`).send({ voteType: 'INVALID' });
+        expect(res.status).toBe(400);
+    });
+
+    test('Vote counts are accurate after multiple operations', async () => {
+        // Clean slate
+        await submitterB.delete(`/api/ideas/${voteIdeaId}/vote`);
+
+        // User B upvotes
+        await submitterB.post(`/api/ideas/${voteIdeaId}/vote`).send({ voteType: 'UP' });
+
+        const detail = await submitterA.get(`/api/ideas/${voteIdeaId}`);
+        expect(detail.body.upvotes).toBe(1);
+        expect(detail.body.downvotes).toBe(0);
+        // Net score = 1 - 0 = 1
+        expect(detail.body.upvotes - detail.body.downvotes).toBe(1);
+    });
+
+    test('Votes and ratings coexist independently', async () => {
+        // User B already has an upvote on the idea — now also rate it
+        await submitterB.post(`/api/ideas/${voteIdeaId}/rate`).send({ rating: 4 });
+
+        const detail = await submitterB.get(`/api/ideas/${voteIdeaId}`);
+        expect(detail.body.upvotes).toBe(1);
+        expect(detail.body.avg_rating).toBe(4);
+        expect(detail.body.rating_count).toBe(1);
     });
 });
