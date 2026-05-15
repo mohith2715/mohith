@@ -24,8 +24,21 @@
 ## Known Issues
 - None.
 
-## Current Phase
-- Phase 8: Finalize filtering, search, sorting, pagination & Bug Fixing.
+- `e5a1c27`
 
-## Latest Commit Hash
-- `888fbc1`
+## Completed Tasks
+- Initialize project structure
+- Add database schema and persistence (SQLite)
+- Implement authentication and authorization (express-session)
+- Generate frontend using Stitch MCP
+- Implement idea CRUD (Create, Read, Update, Delete)
+- Implement ratings system (UPSERT)
+- Implement reviewer workflow (Status update, Action blocks)
+- Finalize filtering, search, sorting, pagination & resolve critical UI bugs (Delete popup fixed with custom modal)
+
+## Pending Tasks
+- Add comprehensive acceptance and integration tests.
+- Finalize README and project documentation.
+
+## Current Phase
+- Phase 9: Acceptance and integration tests.
