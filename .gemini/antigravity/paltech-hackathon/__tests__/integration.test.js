@@ -3,6 +3,7 @@ const request = require('supertest');
 const app = require('../server');
 const db = require('../database');
 const bcrypt = require('bcrypt');
+const ideasRouter = require('../routes/ideas');
 
 describe('Ideas Management System - Full Acceptance Testing (AC1-AC17)', () => {
     let submitter1; // User A
@@ -16,6 +17,8 @@ describe('Ideas Management System - Full Acceptance Testing (AC1-AC17)', () => {
         db.exec('DELETE FROM ratings');
         db.exec('DELETE FROM ideas');
         db.exec("DELETE FROM users WHERE email != 'reviewer@example.com'");
+        // Clear rate limiter so AC tests aren't throttled
+        ideasRouter._creationTimestamps.clear();
         
         submitter1 = request.agent(app);
         submitter2 = request.agent(app);
@@ -23,6 +26,11 @@ describe('Ideas Management System - Full Acceptance Testing (AC1-AC17)', () => {
 
         // Ensure reviewer is logged in
         await reviewer.post('/api/auth/login').send({ email: 'reviewer@example.com', password: 'reviewer123' });
+    });
+
+    beforeEach(() => {
+        // Clear rate limiter before each test to prevent cross-test throttling
+        ideasRouter._creationTimestamps.clear();
     });
 
     afterAll(() => {
@@ -168,6 +176,7 @@ describe('Ideas Management System - Full Acceptance Testing (AC1-AC17)', () => {
     test('AC15: Pagination', async () => {
         // Seed 15 ideas to ensure we have at least 2 pages
         for (let i = 0; i < 15; i++) {
+            if (i % 3 === 0) ideasRouter._creationTimestamps.clear(); // avoid rate limit
             await submitter1.post('/api/ideas').send({ title: `Idea ${i}`, description: 'p', category: 'Tech' });
         }
         
@@ -206,8 +215,13 @@ describe('Rich Text Editor - Persistence & Sanitization', () => {
 
     beforeAll(async () => {
         agent = request.agent(app);
+        ideasRouter._creationTimestamps.clear();
         // Login as existing user
         await agent.post('/api/auth/login').send({ email: 'user1@example.com', password: 'password123' });
+    });
+
+    beforeEach(() => {
+        ideasRouter._creationTimestamps.clear();
     });
 
     test('Rich text HTML is persisted and returned correctly', async () => {
@@ -261,6 +275,7 @@ describe('Upvote / Downvote System', () => {
     beforeAll(async () => {
         submitterA = request.agent(app);
         submitterB = request.agent(app);
+        ideasRouter._creationTimestamps.clear();
 
         await submitterA.post('/api/auth/login').send({ email: 'user1@example.com', password: 'password123' });
         await submitterB.post('/api/auth/login').send({ email: 'user2@example.com', password: 'password123' });
@@ -354,5 +369,111 @@ describe('Upvote / Downvote System', () => {
         expect(detail.body.upvotes).toBe(1);
         expect(detail.body.avg_rating).toBe(4);
         expect(detail.body.rating_count).toBe(1);
+    });
+});
+
+describe('Idea Creation Rate Limiting', () => {
+    let userAgent;
+    let otherAgent;
+
+    beforeAll(async () => {
+        userAgent = request.agent(app);
+        otherAgent = request.agent(app);
+        await userAgent.post('/api/auth/login').send({ email: 'user1@example.com', password: 'password123' });
+        await otherAgent.post('/api/auth/login').send({ email: 'user2@example.com', password: 'password123' });
+    });
+
+    beforeEach(() => {
+        ideasRouter._creationTimestamps.clear();
+    });
+
+    test('User can create up to 3 ideas within 1 minute', async () => {
+        for (let i = 0; i < 3; i++) {
+            const res = await userAgent.post('/api/ideas').send({
+                title: `Rate Limit Test ${i}`,
+                description: `Description ${i}`,
+                category: 'Tech'
+            });
+            expect(res.status).toBe(201);
+        }
+    });
+
+    test('4th request is rejected with 429', async () => {
+        // Create 3 ideas
+        for (let i = 0; i < 3; i++) {
+            await userAgent.post('/api/ideas').send({
+                title: `Limit ${i}`,
+                description: `Desc ${i}`,
+                category: 'Tech'
+            });
+        }
+
+        // 4th should fail
+        const res = await userAgent.post('/api/ideas').send({
+            title: 'Excess Idea',
+            description: 'Should be rejected',
+            category: 'Tech'
+        });
+        expect(res.status).toBe(429);
+    });
+
+    test('Error response contains proper message', async () => {
+        for (let i = 0; i < 3; i++) {
+            await userAgent.post('/api/ideas').send({
+                title: `Msg ${i}`, description: `d ${i}`, category: 'Tech'
+            });
+        }
+
+        const res = await userAgent.post('/api/ideas').send({
+            title: 'Over', description: 'limit', category: 'Tech'
+        });
+        expect(res.body.error).toBe('Idea creation limit exceeded. Please wait before submitting more ideas.');
+    });
+
+    test('Different users have independent limits', async () => {
+        // User 1 creates 3
+        for (let i = 0; i < 3; i++) {
+            await userAgent.post('/api/ideas').send({
+                title: `User1 ${i}`, description: `d ${i}`, category: 'Tech'
+            });
+        }
+
+        // User 1 is blocked
+        const blocked = await userAgent.post('/api/ideas').send({
+            title: 'Blocked', description: 'blocked', category: 'Tech'
+        });
+        expect(blocked.status).toBe(429);
+
+        // User 2 is NOT blocked
+        const ok = await otherAgent.post('/api/ideas').send({
+            title: 'User2 Free', description: 'not blocked', category: 'Tech'
+        });
+        expect(ok.status).toBe(201);
+    });
+
+    test('Unauthorized users are still blocked normally', async () => {
+        const anon = request(app);
+        const res = await anon.post('/api/ideas').send({
+            title: 'Anon', description: 'no auth', category: 'Tech'
+        });
+        expect(res.status).toBe(401);
+    });
+
+    test('Existing validation still works under rate limit', async () => {
+        // Missing fields should return 400, not 429
+        const res = await userAgent.post('/api/ideas').send({ title: '' });
+        expect(res.status).toBe(400);
+    });
+
+    test('Limit resets after time window passes', async () => {
+        // Manually inject old timestamps to simulate time passing
+        const userId = 1; // user1's ID from earlier tests
+        const oldTime = Date.now() - 61000; // 61 seconds ago
+        ideasRouter._creationTimestamps.set(userId, [oldTime, oldTime, oldTime]);
+
+        const res = await userAgent.post('/api/ideas').send({
+            title: 'After Reset', description: 'should work', category: 'Tech'
+        });
+        expect(res.status).toBe(201);
     });
 });

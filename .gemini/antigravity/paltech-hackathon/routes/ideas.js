@@ -139,8 +139,38 @@ router.get('/:id', (req, res) => {
     }
 });
 
+// --- Rate Limiter for Idea Creation ---
+const RATE_LIMIT_MAX = 3;
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 60 seconds
+const creationTimestamps = new Map(); // userId -> [timestamps]
+
+function ideaCreationRateLimit(req, res, next) {
+    const userId = req.session.userId;
+    const now = Date.now();
+    const windowStart = now - RATE_LIMIT_WINDOW_MS;
+
+    // Get and prune old timestamps
+    let timestamps = creationTimestamps.get(userId) || [];
+    timestamps = timestamps.filter(t => t > windowStart);
+    creationTimestamps.set(userId, timestamps);
+
+    if (timestamps.length >= RATE_LIMIT_MAX) {
+        return res.status(429).json({
+            error: 'Idea creation limit exceeded. Please wait before submitting more ideas.'
+        });
+    }
+
+    // Record this attempt (will be counted even if validation fails downstream — acceptable trade-off)
+    timestamps.push(now);
+    creationTimestamps.set(userId, timestamps);
+    next();
+}
+
+// Expose for testing — allows resetting the rate limiter between tests
+router._creationTimestamps = creationTimestamps;
+
 // Create idea
-router.post('/', requireAuth, (req, res) => {
+router.post('/', requireAuth, ideaCreationRateLimit, (req, res) => {
     const { title, description, category } = req.body;
     if (!title || !category) {
         return res.status(400).json({ error: 'Title, description, and category are required' });
