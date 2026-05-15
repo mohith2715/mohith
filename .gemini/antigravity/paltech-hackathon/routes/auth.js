@@ -13,7 +13,7 @@ router.post('/register', (req, res) => {
     
     // We default new users to 'SUBMITTER'. Reviewers are seeded/added by admins.
     let role = 'SUBMITTER';
-    if (reviewer_code === 'SECRET_REVIEWER_CODE') {
+    if (process.env.REVIEWER_CODE && reviewer_code === process.env.REVIEWER_CODE) {
         role = 'REVIEWER';
     }
     
