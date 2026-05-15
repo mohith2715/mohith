@@ -59,7 +59,7 @@ const showConfirmModal = (title, message, isAlert = false) => {
         titleEl.textContent = title;
         msgEl.textContent = message;
         confirmBtn.textContent = isAlert ? 'OK' : 'Confirm';
-        
+
         if (isAlert) {
             cancelBtn.classList.add('hidden');
             confirmBtn.classList.replace('bg-error', 'bg-primary');
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Dashboard / My Ideas pages
             toggleBtn.className = 'p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface flex items-center justify-center';
             desktopNav.appendChild(toggleBtn);
-            
+
             // Mobile navigation injection
             const mobileDiv = header.querySelector('.md\\:hidden');
             if (mobileDiv) {
@@ -168,8 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle logout buttons everywhere (text or icon)
     document.querySelectorAll('button, a').forEach(b => {
-        const isLogout = b.textContent.includes('Logout') || 
-                         (b.querySelector('span') && b.querySelector('span').textContent === 'logout');
+        const isLogout = b.textContent.includes('Logout') ||
+            (b.querySelector('span') && b.querySelector('span').textContent === 'logout');
         if (isLogout) {
             b.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 const email = document.querySelector('input[type="email"]').value;
                 const password = document.querySelector('input[type="password"], input[type="text"][placeholder="••••••••"]').value;
-                
+
                 try {
                     const res = await fetch('/api/auth/login', {
                         method: 'POST',
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-        
+
         // Wire up "Sign Up" link
         const signUpLinks = Array.from(document.querySelectorAll('a')).filter(a => a.textContent.includes('Sign Up'));
         signUpLinks.forEach(a => {
@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 const reviewerCodeInput = document.querySelector('#reviewer-code');
                 const reviewer_code = reviewerCodeInput ? reviewerCodeInput.value : '';
-                
+
                 try {
                     const res = await fetch('/api/auth/register', {
                         method: 'POST',
@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-        
+
         // Wire up "Sign in" link
         const signInLinks = Array.from(document.querySelectorAll('a')).filter(a => a.textContent.includes('Sign in') || a.textContent.includes('Log In'));
         signInLinks.forEach(a => {
@@ -412,13 +412,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 const data = await res.json();
-                
+
                 // Update dynamic counts
                 const resultsText = Array.from(document.querySelectorAll('p')).find(p => p.textContent.includes('results from'));
                 if (resultsText) {
                     resultsText.textContent = `Showing ${data.pagination.total} results from your collection`;
                 }
-                
+
                 const listContainer = document.querySelector('.space-y-md');
                 if (!listContainer) return; // fail gracefully
 
@@ -427,10 +427,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     window._cardTemplate = listContainer.firstElementChild.cloneNode(true);
                 }
                 listContainer.innerHTML = ''; // clear static data
-                
+
                 for (const idea of data.data) {
                     const card = window._cardTemplate.cloneNode(true);
-                    
+
                     // Populate title
                     const titleEl = card.querySelector('h3');
                     if (titleEl) titleEl.textContent = idea.title;
@@ -445,9 +445,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Populate rating
                     const ratingSpan = card.querySelector('.font-label-md');
                     if (ratingSpan) ratingSpan.textContent = idea.avg_rating.toFixed(1);
-                    
+
                     const countSpan = card.querySelector('.font-body-sm.text-outline');
                     if (countSpan) countSpan.textContent = `• ${idea.rating_count} ratings`;
+
+                    // Add vote score to card
+                    const ratingRow = card.querySelector('.flex.items-center.gap-xs');
+                    if (ratingRow) {
+                        const netVotes = (idea.upvotes || 0) - (idea.downvotes || 0);
+                        const voteEl = document.createElement('span');
+                        voteEl.className = 'font-body-sm text-body-sm text-outline flex items-center gap-1 ml-2';
+                        voteEl.innerHTML = `<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 0;">thumbs_up_down</span> ${netVotes}`;
+                        ratingRow.appendChild(voteEl);
+                    }
 
                     // Handle clicks to navigate to details
                     card.style.cursor = 'pointer';
@@ -501,7 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         for (let i = 1; i <= data.pagination.totalPages; i++) {
                             const btn = document.createElement('button');
                             btn.textContent = i;
-                            btn.className = i === currentPage 
+                            btn.className = i === currentPage
                                 ? "w-10 h-10 rounded-lg bg-primary text-on-primary font-bold"
                                 : "w-10 h-10 rounded-lg hover:bg-surface-container text-on-surface-variant";
                             btn.addEventListener('click', () => {
@@ -517,13 +527,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (nextPrevBtns.length >= 2) {
                         const prevBtn = nextPrevBtns[0];
                         const nextBtn = nextPrevBtns[nextPrevBtns.length - 1];
-                        
+
                         // Disable if needed
                         prevBtn.style.opacity = currentPage === 1 ? '0.5' : '1';
-                        prevBtn.onclick = () => { if(currentPage > 1) { currentPage--; loadIdeas(); }};
+                        prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; loadIdeas(); } };
 
                         nextBtn.style.opacity = currentPage === data.pagination.totalPages ? '0.5' : '1';
-                        nextBtn.onclick = () => { if(currentPage < data.pagination.totalPages) { currentPage++; loadIdeas(); }};
+                        nextBtn.onclick = () => { if (currentPage < data.pagination.totalPages) { currentPage++; loadIdeas(); } };
                     }
                 }
 
@@ -535,17 +545,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ----- CREATE IDEA PAGE -----
     if (path === '/create.html') {
+        // Initialize Quill rich text editor
+        let quillEditor = null;
+        const editorEl = document.getElementById('quill-editor');
+        if (editorEl && typeof Quill !== 'undefined') {
+            quillEditor = new Quill('#quill-editor', {
+                theme: 'snow',
+                placeholder: 'Describe your idea in detail...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        ['link', 'blockquote', 'code-block'],
+                        ['clean']
+                    ]
+                }
+            });
+        }
+
         const submitBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Submit'));
         if (submitBtn) {
             submitBtn.addEventListener('click', async (e) => {
                 e.preventDefault();
                 const title = document.getElementById('idea-title')?.value || '';
                 const category = document.getElementById('idea-category')?.value || 'Tech';
-                const description = document.getElementById('idea-description')?.value || '';
-
-                if (!title || !description) {
-                    showError('Please fill in both title and description');
-                    return;
+                
+                // Get description from Quill editor or fallback
+                let description = '';
+                if (quillEditor) {
+                    description = quillEditor.root.innerHTML;
+                    // Check if editor is empty (Quill puts <p><br></p> when empty)
+                    const textOnly = quillEditor.getText().trim();
+                    if (!title || !textOnly) {
+                        showError('Please fill in both title and description');
+                        return;
+                    }
+                } else {
+                    description = document.getElementById('idea-description')?.value || '';
+                    if (!title || !description) {
+                        showError('Please fill in both title and description');
+                        return;
+                    }
                 }
 
                 try {
@@ -578,7 +619,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (path === '/idea.html') {
         const params = new URLSearchParams(window.location.search);
         const id = params.get('id');
-        
+
         if (!id) {
             window.location.href = '/index.html';
             return;
@@ -595,13 +636,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const res = await fetch(`/api/ideas/${id}`);
-                if (!res.ok) { window.location.href='/index.html'; return; }
+                if (!res.ok) { window.location.href = '/index.html'; return; }
                 const idea = await res.json();
-                
+
                 const userRes = await fetch('/api/auth/me');
-                if (!userRes.ok) { window.location.href='/login.html'; return; }
+                if (!userRes.ok) { window.location.href = '/login.html'; return; }
                 const user = await userRes.json();
-                
+
                 // Meticulously target Stitch UI
                 const titleEl = document.querySelector('h2');
                 if (titleEl) titleEl.textContent = idea.title;
@@ -612,9 +653,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     tagSpans[1].textContent = idea.status;
                 }
 
-                // Description
+                // Description — render rich HTML content (already sanitized server-side)
                 const descEl = document.querySelector('p.font-body-lg');
-                if (descEl) descEl.textContent = idea.description;
+                if (descEl) {
+                    descEl.innerHTML = idea.description;
+                    descEl.classList.add('prose', 'max-w-none');
+                }
 
                 // Submitter info
                 const spans = document.querySelectorAll('span');
@@ -626,7 +670,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Ratings
                 const ratingNumEl = document.querySelector('span.text-\\[40px\\]');
                 if (ratingNumEl) ratingNumEl.textContent = idea.avg_rating.toFixed(1);
-                
+
                 const reviewCountEl = Array.from(document.querySelectorAll('p')).find(p => p.textContent.includes('Based on'));
                 if (reviewCountEl) reviewCountEl.textContent = `Based on ${idea.rating_count} reviews`;
 
@@ -635,7 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (displayStarsContainer && displayStarsContainer.children.length === 5) {
                     const stars = displayStarsContainer.children;
                     const val = Math.round(idea.avg_rating);
-                    for (let i=0; i<5; i++) {
+                    for (let i = 0; i < 5; i++) {
                         if (i < val) {
                             stars[i].style.fontVariationSettings = "'FILL' 1";
                         } else {
@@ -672,7 +716,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     b.classList.replace('text-secondary', 'text-outline-variant');
                                 }
                             });
-                            
+
                             const removeContainer = document.getElementById('remove-rating-container');
                             const removeBtn = document.getElementById('remove-rating-btn');
                             if (removeContainer && removeBtn) {
@@ -692,6 +736,59 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
+                // Vote Section
+                const voteSection = document.getElementById('vote-section');
+                const upvoteBtn = document.getElementById('upvote-btn');
+                const downvoteBtn = document.getElementById('downvote-btn');
+                const upvoteCount = document.getElementById('upvote-count');
+                const downvoteCount = document.getElementById('downvote-count');
+                const netScore = document.getElementById('net-score');
+
+                if (voteSection) {
+                    const upvotes = idea.upvotes || 0;
+                    const downvotes = idea.downvotes || 0;
+                    upvoteCount.textContent = upvotes;
+                    downvoteCount.textContent = downvotes;
+                    netScore.textContent = upvotes - downvotes;
+
+                    if (idea.submitter_id === user.id) {
+                        // Hide voting for own ideas
+                        voteSection.style.display = 'none';
+                    } else {
+                        // Set active state for current user's vote
+                        if (idea.user_vote === 'UP') {
+                            upvoteBtn.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+                            upvoteBtn.querySelector('.material-symbols-outlined').classList.replace('text-outline', 'text-green-600');
+                            upvoteBtn.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 1";
+                        } else if (idea.user_vote === 'DOWN') {
+                            downvoteBtn.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/20');
+                            downvoteBtn.querySelector('.material-symbols-outlined').classList.replace('text-outline', 'text-red-600');
+                            downvoteBtn.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 1";
+                        }
+
+                        const castVote = async (voteType) => {
+                            try {
+                                const res = await fetch(`/api/ideas/${id}/vote`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ voteType })
+                                });
+                                if (res.ok) {
+                                    window.location.reload();
+                                } else {
+                                    const data = await res.json();
+                                    showError(data.error);
+                                }
+                            } catch (err) {
+                                showError('Failed to vote');
+                            }
+                        };
+
+                        upvoteBtn.addEventListener('click', () => castVote('UP'));
+                        downvoteBtn.addEventListener('click', () => castVote('DOWN'));
+                    }
+                }
+
                 // Reviewer Block
                 const reviewerAside = document.querySelector('aside');
                 if (reviewerAside) {
@@ -702,7 +799,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const statusSelect = reviewerAside.querySelector('select');
                         const noteInput = reviewerAside.querySelector('textarea');
                         const updateBtn = Array.from(reviewerAside.querySelectorAll('button')).find(b => b.textContent.includes('Update Status'));
-                        
+
                         if (updateBtn) {
                             updateBtn.addEventListener('click', (e) => {
                                 e.preventDefault();
@@ -711,7 +808,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 }
-                
+
                 // If there's a reviewer note, inject it below description.
                 if (idea.review_note) {
                     const descContainer = descEl.parentElement;

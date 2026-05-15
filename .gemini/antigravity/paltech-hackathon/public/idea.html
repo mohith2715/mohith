@@ -78,6 +78,21 @@
                         </p>
 </div>
 </section>
+<!-- Vote Section -->
+<section id="vote-section" class="bg-surface-container-lowest p-lg rounded-xl shadow-[0px_4px_15px_0px_rgba(0,0,0,0.04)] flex items-center justify-center gap-xl">
+<button id="upvote-btn" class="flex items-center gap-2 px-md py-sm rounded-lg border border-outline-variant hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all active:scale-95 group">
+<span class="material-symbols-outlined text-[24px] text-outline group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">thumb_up</span>
+<span id="upvote-count" class="font-label-md text-label-md text-on-surface-variant group-hover:text-green-600 dark:group-hover:text-green-400">0</span>
+</button>
+<div class="text-center">
+<span id="net-score" class="text-[28px] font-extrabold text-primary">0</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Net Score</p>
+</div>
+<button id="downvote-btn" class="flex items-center gap-2 px-md py-sm rounded-lg border border-outline-variant hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all active:scale-95 group">
+<span class="material-symbols-outlined text-[24px] text-outline group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">thumb_down</span>
+<span id="downvote-count" class="font-label-md text-label-md text-on-surface-variant group-hover:text-red-600 dark:group-hover:text-red-400">0</span>
+</button>
+</section>
 <!-- Ratings Section -->
 <section class="bg-surface-container-lowest p-lg rounded-xl shadow-[0px_4px_15px_0px_rgba(0,0,0,0.04)]">
 <h3 class="font-headline-sm text-headline-sm text-primary mb-lg">Ratings</h3>
@@ -137,7 +152,7 @@
 <div class="space-y-lg">
 <div>
 <label class="block font-label-md text-label-md mb-xs opacity-80">Change Status</label>
-<select class="w-full bg-white text-primary border-none rounded-lg py-3 px-4 font-body-md text-body-md focus:ring-2 focus:ring-secondary appearance-none">
+<select class="w-full bg-surface-container-lowest text-primary border-none rounded-lg py-3 px-4 font-body-md text-body-md focus:ring-2 focus:ring-secondary appearance-none">
 <option selected="">Under Review</option>
 <option>Selected</option>
 <option>Rejected</option>
@@ -145,9 +160,9 @@
 </div>
 <div>
 <label class="block font-label-md text-label-md mb-xs opacity-80">Reviewer Notes</label>
-<textarea class="w-full bg-white text-primary border-none rounded-lg py-3 px-4 font-body-md text-body-md focus:ring-2 focus:ring-secondary placeholder:text-on-surface-variant/50 resize-none" placeholder="Add notes about your decision..." rows="4"></textarea>
+<textarea class="w-full bg-surface-container-lowest text-primary border-none rounded-lg py-3 px-4 font-body-md text-body-md focus:ring-2 focus:ring-secondary placeholder:text-on-surface-variant/50 resize-none" placeholder="Add notes about your decision..." rows="4"></textarea>
 </div>
-<button class="w-full bg-white text-primary font-label-md text-label-md py-4 rounded-lg hover:bg-surface-container-low transition-colors active:scale-[0.98] duration-200 shadow-md">
+<button class="w-full bg-surface-container-lowest text-primary font-label-md text-label-md py-4 rounded-lg hover:bg-surface-container-low transition-colors active:scale-[0.98] duration-200 shadow-md">
                                 Update Status
                             </button>
 </div>

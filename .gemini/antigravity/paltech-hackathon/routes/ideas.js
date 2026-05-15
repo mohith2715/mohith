@@ -1,8 +1,32 @@
 const express = require('express');
 const db = require('../database');
+const sanitizeHtml = require('sanitize-html');
 const { requireAuth, requireReviewer } = require('./auth');
 
 const router = express.Router();
+
+// Sanitize rich text HTML — allow safe formatting only
+function sanitizeDescription(html) {
+    return sanitizeHtml(html, {
+        allowedTags: ['b', 'i', 'u', 'em', 'strong', 'p', 'br', 'ul', 'ol', 'li',
+                      'h1', 'h2', 'h3', 'a', 'blockquote', 'pre', 'code', 'span'],
+        allowedAttributes: {
+            'a': ['href', 'target', 'rel'],
+            'span': ['style'],
+            'p': ['class'],
+            'li': ['class']
+        },
+        allowedStyles: {
+            'span': { 'text-decoration': [/^underline$/] }
+        }
+    });
+}
+
+// Check if HTML has actual text content (not just empty tags)
+function hasTextContent(html) {
+    const stripped = sanitizeHtml(html, { allowedTags: [], allowedAttributes: {} }).trim();
+    return stripped.length > 0;
+}
 
 // Get list of ideas with filtering, search, sorting, pagination
 router.get('/', requireAuth, (req, res) => {
@@ -16,7 +40,9 @@ router.get('/', requireAuth, (req, res) => {
         SELECT i.*, 
                u.email as submitter_email,
                COALESCE(AVG(r.rating), 0) as avg_rating,
-               COUNT(r.id) as rating_count
+               COUNT(r.id) as rating_count,
+               (SELECT COUNT(*) FROM votes WHERE idea_id = i.id AND vote_type = 'UP') as upvotes,
+               (SELECT COUNT(*) FROM votes WHERE idea_id = i.id AND vote_type = 'DOWN') as downvotes
         FROM ideas i
         JOIN users u ON i.submitter_id = u.id
         LEFT JOIN ratings r ON i.id = r.idea_id
@@ -92,13 +118,16 @@ router.get('/:id', (req, res) => {
                    u.email as submitter_email,
                    COALESCE(AVG(r.rating), 0) as avg_rating,
                    COUNT(r.id) as rating_count,
-                   (SELECT rating FROM ratings WHERE idea_id = i.id AND user_id = ?) as user_rating
+                   (SELECT rating FROM ratings WHERE idea_id = i.id AND user_id = ?) as user_rating,
+                   (SELECT COUNT(*) FROM votes WHERE idea_id = i.id AND vote_type = 'UP') as upvotes,
+                   (SELECT COUNT(*) FROM votes WHERE idea_id = i.id AND vote_type = 'DOWN') as downvotes,
+                   (SELECT vote_type FROM votes WHERE idea_id = i.id AND user_id = ?) as user_vote
             FROM ideas i
             JOIN users u ON i.submitter_id = u.id
             LEFT JOIN ratings r ON i.id = r.idea_id
             WHERE i.id = ?
             GROUP BY i.id
-        `).get(req.session.userId, req.params.id);
+        `).get(req.session.userId, req.session.userId, req.params.id);
 
         if (!idea) {
             return res.status(404).json({ error: 'Idea not found' });
@@ -113,14 +142,20 @@ router.get('/:id', (req, res) => {
 // Create idea
 router.post('/', requireAuth, (req, res) => {
     const { title, description, category } = req.body;
-    if (!title || !description || !category) {
+    if (!title || !category) {
+        return res.status(400).json({ error: 'Title, description, and category are required' });
+    }
+
+    // Sanitize and validate description
+    const cleanDesc = description ? sanitizeDescription(description) : '';
+    if (!hasTextContent(cleanDesc)) {
         return res.status(400).json({ error: 'Title, description, and category are required' });
     }
 
     try {
         const stmt = db.prepare('INSERT INTO ideas (title, description, category, submitter_id) VALUES (?, ?, ?, ?)');
-        const info = stmt.run(title, description, category, req.session.userId);
-        res.status(201).json({ id: info.lastInsertRowid, title, description, category, status: 'Submitted' });
+        const info = stmt.run(title, cleanDesc, category, req.session.userId);
+        res.status(201).json({ id: info.lastInsertRowid, title, description: cleanDesc, category, status: 'Submitted' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal server error' });
@@ -132,7 +167,13 @@ router.put('/:id', requireAuth, (req, res) => {
     const { title, description, category } = req.body;
     const ideaId = req.params.id;
 
-    if (!title || !description || !category) {
+    if (!title || !category) {
+        return res.status(400).json({ error: 'Title, description, and category are required' });
+    }
+
+    // Sanitize and validate description
+    const cleanDesc = description ? sanitizeDescription(description) : '';
+    if (!hasTextContent(cleanDesc)) {
         return res.status(400).json({ error: 'Title, description, and category are required' });
     }
 
@@ -151,7 +192,7 @@ router.put('/:id', requireAuth, (req, res) => {
         }
 
         const stmt = db.prepare('UPDATE ideas SET title = ?, description = ?, category = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
-        stmt.run(title, description, category, ideaId);
+        stmt.run(title, cleanDesc, category, ideaId);
         res.json({ message: 'Idea updated successfully' });
     } catch (err) {
         console.error(err);
@@ -226,6 +267,62 @@ router.delete('/:id/rate', requireAuth, (req, res) => {
     try {
         db.prepare('DELETE FROM ratings WHERE user_id = ? AND idea_id = ?').run(req.session.userId, ideaId);
         res.json({ message: 'Rating removed successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Vote on idea (upvote / downvote)
+router.post('/:id/vote', requireAuth, (req, res) => {
+    const ideaId = req.params.id;
+    const { voteType } = req.body;
+
+    if (!['UP', 'DOWN'].includes(voteType)) {
+        return res.status(400).json({ error: 'voteType must be UP or DOWN' });
+    }
+
+    try {
+        const idea = db.prepare('SELECT submitter_id FROM ideas WHERE id = ?').get(ideaId);
+        if (!idea) {
+            return res.status(404).json({ error: 'Idea not found' });
+        }
+
+        if (idea.submitter_id === req.session.userId) {
+            return res.status(400).json({ error: 'Cannot vote on your own idea' });
+        }
+
+        // Check for existing vote
+        const existingVote = db.prepare('SELECT * FROM votes WHERE user_id = ? AND idea_id = ?').get(req.session.userId, ideaId);
+
+        if (existingVote) {
+            if (existingVote.vote_type === voteType) {
+                // Same vote again — toggle off (remove)
+                db.prepare('DELETE FROM votes WHERE id = ?').run(existingVote.id);
+                return res.json({ message: 'Vote removed', action: 'removed' });
+            } else {
+                // Different vote — switch direction
+                db.prepare('UPDATE votes SET vote_type = ? WHERE id = ?').run(voteType, existingVote.id);
+                return res.json({ message: 'Vote switched', action: 'switched' });
+            }
+        } else {
+            // New vote
+            db.prepare('INSERT INTO votes (user_id, idea_id, vote_type) VALUES (?, ?, ?)').run(req.session.userId, ideaId, voteType);
+            return res.json({ message: 'Vote recorded', action: 'created' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Remove vote
+router.delete('/:id/vote', requireAuth, (req, res) => {
+    const ideaId = req.params.id;
+
+    try {
+        db.prepare('DELETE FROM votes WHERE user_id = ? AND idea_id = ?').run(req.session.userId, ideaId);
+        res.json({ message: 'Vote removed successfully' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal server error' });
