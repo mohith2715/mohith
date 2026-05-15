@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     showError("Passwords do not match");
                     return;
                 }
-                const reviewerCodeInput = form.querySelector('#reviewer-code');
+                const reviewerCodeInput = document.querySelector('#reviewer-code');
                 const reviewer_code = reviewerCodeInput ? reviewerCodeInput.value : '';
                 
                 try {
