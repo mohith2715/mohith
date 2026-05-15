@@ -122,19 +122,36 @@ function setupPasswordToggles() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Inject Theme Toggle Button
-    const headerFlex = document.querySelector('header > div');
-    if (headerFlex) {
+    // Inject Theme Toggle Button safely without intersecting
+    const header = document.querySelector('header');
+    if (header) {
         const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface flex items-center justify-center absolute right-4 md:right-16 top-1/2 -translate-y-1/2 z-50';
         toggleBtn.innerHTML = `<span class="material-symbols-outlined" style="font-size: 20px;">dark_mode</span>`;
-        toggleBtn.onclick = () => {
+        toggleBtn.onclick = (e) => {
+            e.preventDefault();
             window.toggleTheme();
-            // Update icon visually if desired, though standard is just rotating them
         };
-        // Ensure parent has position relative if needed, but header is usually fixed/relative
-        document.querySelector('header').style.position = 'fixed';
-        document.querySelector('header').appendChild(toggleBtn);
+
+        const desktopNav = header.querySelector('nav');
+        if (desktopNav) {
+            // Dashboard / My Ideas pages
+            toggleBtn.className = 'p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface flex items-center justify-center';
+            desktopNav.appendChild(toggleBtn);
+            
+            // Mobile navigation injection
+            const mobileDiv = header.querySelector('.md\\:hidden');
+            if (mobileDiv) {
+                const mobileBtn = toggleBtn.cloneNode(true);
+                mobileBtn.onclick = toggleBtn.onclick;
+                mobileDiv.classList.add('flex', 'items-center', 'gap-2');
+                mobileDiv.insertBefore(mobileBtn, mobileDiv.firstChild);
+            }
+        } else {
+            // Login / Register / Create pages
+            toggleBtn.className = 'p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface flex items-center justify-center absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-50';
+            header.style.position = 'relative';
+            header.appendChild(toggleBtn);
+        }
     }
 
     const path = window.location.pathname;
