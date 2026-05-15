@@ -180,35 +180,25 @@
 <button class="w-full h-[48px] bg-primary text-on-primary font-label-md text-label-md rounded-xl hover:bg-primary-container transition-colors active:scale-95 transition-transform" type="submit">
           Submit Idea
         </button>
-<button class="w-full h-[48px] border border-primary text-primary font-label-md text-label-md rounded-xl hover:bg-surface-container-low transition-colors active:scale-95 transition-transform" type="button">
+<button id="cancel-btn" class="w-full h-[48px] border border-primary text-primary font-label-md text-label-md rounded-xl hover:bg-surface-container-low transition-colors active:scale-95 transition-transform" type="button">
           Cancel
         </button>
 </div>
 </form>
 </main>
 <!-- BottomNavBar -->
-<nav class="fixed bottom-0 w-full z-50 bg-surface dark:bg-surface-dim shadow-[0_-4px_15px_rgba(0,0,0,0.04)]">
-<div class="flex justify-around items-center h-16 px-4">
-<!-- Feed -->
-<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-secondary-fixed transition-colors active:scale-90 transition-transform" href="#">
-<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
-<span class="font-label-sm text-label-sm">Feed</span>
-</a>
-<!-- Add (ACTIVE) -->
-<a class="flex flex-col items-center justify-center text-primary dark:text-secondary-fixed font-semibold active:scale-90 transition-transform" href="#">
-<span class="material-symbols-outlined" data-icon="add_circle" style="font-variation-settings: 'FILL' 1;">add_circle</span>
-<span class="font-label-sm text-label-sm">Add</span>
-</a>
-<!-- Inbox -->
-<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-secondary-fixed transition-colors active:scale-90 transition-transform" href="#">
-<span class="material-symbols-outlined" data-icon="mail">mail</span>
-<span class="font-label-sm text-label-sm">Inbox</span>
-</a>
-<!-- Profile -->
-<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-secondary-fixed transition-colors active:scale-90 transition-transform" href="#">
-<span class="material-symbols-outlined" data-icon="person">person</span>
-<span class="font-label-sm text-label-sm">Profile</span>
-</a>
-</div>
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-surface-variant shadow-[0_-4px_15px_rgba(0,0,0,0.04)] h-12 flex justify-around items-center px-margin-mobile">
+<button class="nav-dashboard flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</button>
+<button class="nav-myideas flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="emoji_objects">emoji_objects</span>
+<span class="font-label-sm text-label-sm">My Ideas</span>
+</button>
+<button class="nav-logout flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="logout">logout</span>
+<span class="font-label-sm text-label-sm">Logout</span>
+</button>
 </nav>
 <script src="/app.js"></script></body></html>

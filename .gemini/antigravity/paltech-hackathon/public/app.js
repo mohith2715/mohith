@@ -38,12 +38,45 @@ function setupPasswordToggles() {
 document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname;
 
-    // Handle logout buttons everywhere
-    document.querySelectorAll('button').forEach(b => {
-        if (b.textContent.includes('Logout')) {
+    document.querySelectorAll('[data-icon="search"]').forEach(el => {
+        const btn = el.closest('button') || el.closest('a');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = '/index.html?focus=search';
+            });
+        }
+    });
+
+    // Handle logout buttons everywhere (text or icon)
+    document.querySelectorAll('button, a').forEach(b => {
+        const isLogout = b.textContent.includes('Logout') || 
+                         (b.querySelector('span') && b.querySelector('span').textContent === 'logout');
+        if (isLogout) {
             b.addEventListener('click', (e) => {
                 e.preventDefault();
                 window.logout();
+            });
+        }
+    });
+
+    // Global Nav Listeners (for mobile bottom nav or desktop links)
+    document.querySelectorAll('.nav-dashboard, [data-icon="dashboard"]').forEach(el => {
+        const btn = el.closest('button') || el.closest('a');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = '/index.html?tab=dashboard';
+            });
+        }
+    });
+
+    document.querySelectorAll('.nav-myideas, [data-icon="emoji_objects"], [data-icon="lightbulb"]').forEach(el => {
+        const btn = el.closest('button') || el.closest('a');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = '/index.html?tab=myideas';
             });
         }
     });
@@ -136,7 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ----- DASHBOARD (INDEX) PAGE -----
     if (path === '/index.html' || path === '/') {
-        let currentTab = 'dashboard'; // 'dashboard' or 'myideas'
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentTab = urlParams.get('tab') || 'dashboard'; // 'dashboard' or 'myideas'
         let currentPage = 1;
         let currentSearch = '';
         let currentCategory = '';
@@ -165,9 +199,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Wire up Filters
         const searchInput = document.querySelector('input[placeholder="Search ideas..."]');
         if (searchInput) {
+            if (urlParams.get('focus') === 'search') {
+                searchInput.focus();
+            }
             searchInput.addEventListener('input', (e) => {
                 currentSearch = e.target.value;
                 currentPage = 1;
@@ -401,16 +437,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ----- CREATE IDEA PAGE -----
     if (path === '/create.html') {
-        const btn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Submit'));
-        if (btn) {
-            btn.addEventListener('click', async (e) => {
+        const submitBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Submit'));
+        if (submitBtn) {
+            submitBtn.addEventListener('click', async (e) => {
                 e.preventDefault();
-                const inputs = document.querySelectorAll('input');
-                const title = inputs[0] ? inputs[0].value : '';
-                const select = document.querySelector('select');
-                const category = select ? select.value : 'Tech';
-                const textarea = document.querySelector('textarea');
-                const description = textarea ? textarea.value : '';
+                const title = document.getElementById('idea-title')?.value || '';
+                const category = document.getElementById('idea-category')?.value || 'Tech';
+                const description = document.getElementById('idea-description')?.value || '';
+
+                if (!title || !description) {
+                    showError('Please fill in both title and description');
+                    return;
+                }
 
                 try {
                     const res = await fetch('/api/ideas', {
@@ -427,6 +465,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (err) {
                     showError('Failed to create idea');
                 }
+            });
+        }
+
+        const cancelBtn = document.getElementById('cancel-btn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                window.location.href = '/index.html';
             });
         }
     }
